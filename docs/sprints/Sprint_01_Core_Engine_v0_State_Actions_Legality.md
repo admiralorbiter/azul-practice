@@ -1,5 +1,7 @@
 # Sprint 1 — Core Engine v0: State, Actions, Legality, Apply (Draft Phase)
 
+> **Note:** This sprint has been subdivided into 4 focused sub-sprints for better organization and incremental implementation. See the [Subdivision Overview](#subdivision-overview) section below.
+
 **Goal:** Engine can represent a 2-player draft state and correctly enumerate/apply draft actions with clear legality errors.
 
 ## Outcomes
@@ -7,6 +9,65 @@
 - Deterministic, testable core functions:
   - `list_legal_actions(state, playerId)`
   - `apply_action(state, action) -> nextState | error`
+
+---
+
+## Subdivision Overview
+
+This sprint has been subdivided into **four focused sub-sprints** for better organization, clearer dependencies, and incremental validation:
+
+1. **[Sprint 01A: Data Models & Serialization](Sprint_01A_Data_Models_Serialization.md)**
+   - Define Rust structs for State, Action, PlayerBoard, etc.
+   - Implement JSON serialization with serde
+   - Ensure round-trip stability and version tracking
+
+2. **[Sprint 01B: Rules & Legality Checks](Sprint_01B_Rules_Legality_Checks.md)**
+   - Implement `list_legal_actions` function
+   - Enforce pattern line and wall constraints
+   - Handle all edge cases for draft move validation
+
+3. **[Sprint 01C: Action Application & State Transitions](Sprint_01C_Apply_Action_Transitions.md)**
+   - Implement `apply_action` with state mutations
+   - Handle tile overflow and first-player token transfers
+   - Implement tile conservation invariants
+
+4. **[Sprint 01D: WASM Integration & Tests](Sprint_01D_WASM_Integration_Tests.md)**
+   - Expose WASM exports with error handling
+   - Create TypeScript wrapper and types
+   - Build demo UI and integration tests
+
+### Subdivision Rationale
+
+The original Sprint 01 scope is substantial and involves several interconnected components. Subdividing provides:
+
+- **Clearer dependencies:** Each sub-sprint builds on the previous one
+- **Incremental validation:** Test thoroughly at each stage before moving forward
+- **Better planning:** More detailed specifications for each focused task
+- **Easier debugging:** Isolate issues to specific layers (models vs rules vs WASM)
+- **Parallelizable documentation:** Can write detailed implementation plans per sub-sprint
+
+### Implementation Order
+
+The sub-sprints must be completed sequentially due to dependencies:
+
+```
+Sprint 01A (Data Models)
+    ↓
+Sprint 01B (Legality) ← depends on State/Action types
+    ↓
+Sprint 01C (Apply Action) ← depends on legality checks
+    ↓
+Sprint 01D (WASM) ← depends on full engine implementation
+```
+
+### Integration Points
+
+- **1A → 1B:** State and Action types are used by legality functions
+- **1B → 1C:** Legality checks are reused for validation in `apply_action`
+- **1C → 1D:** Complete engine functions are wrapped for WASM boundary
+- **All → Tests:** Each sub-sprint includes essential tests that build on each other
+
+---
 
 ## Scope
 ### 1) Data model (Rust)
@@ -65,9 +126,30 @@
 - Sprint 0 WASM pipeline
 
 ## Sprint Backlog (Suggested Tasks)
+
+The detailed tasks for this sprint are organized within the sub-sprint documents:
+
+### Sprint 01A Tasks
 - [ ] Define Rust `State` and `Action` structs + serde
-- [ ] Implement legality checks
-- [ ] Implement apply_action transitions
-- [ ] Implement `list_legal_actions`
-- [ ] Add invariants + tests
-- [ ] Expose WASM exports + basic JS bindings
+- [ ] Implement JSON serialization with round-trip tests
+- [ ] Document all data structures with examples
+- See [Sprint_01A_Data_Models_Serialization.md](Sprint_01A_Data_Models_Serialization.md) for details
+
+### Sprint 01B Tasks
+- [ ] Implement `list_legal_actions` function
+- [ ] Implement legality checks for pattern lines and walls
+- [ ] Add edge case tests for all constraint types
+- See [Sprint_01B_Rules_Legality_Checks.md](Sprint_01B_Rules_Legality_Checks.md) for details
+
+### Sprint 01C Tasks
+- [ ] Implement `apply_action` state transitions
+- [ ] Handle tile overflow and first-player token logic
+- [ ] Add invariants (tile conservation) and state transition tests
+- See [Sprint_01C_Apply_Action_Transitions.md](Sprint_01C_Apply_Action_Transitions.md) for details
+
+### Sprint 01D Tasks
+- [ ] Expose WASM exports with error handling
+- [ ] Create TypeScript wrappers and type definitions
+- [ ] Build demo UI component
+- [ ] Add integration tests
+- See [Sprint_01D_WASM_Integration_Tests.md](Sprint_01D_WASM_Integration_Tests.md) for details
