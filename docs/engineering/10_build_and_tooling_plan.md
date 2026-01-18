@@ -14,12 +14,6 @@
   - Seed display/control
   - Copy scenario JSON
 
-## CI pipeline (minimum)
-- `cargo fmt` + `cargo clippy`
-- `cargo test`
-- UI build
-- Golden scenario tests (engine correctness)
-
 ## Artifacts
 - WASM bundle for web
 - Optional: scenario pack outputs

@@ -1,0 +1,81 @@
+.engine-status {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.version-section,
+.ping-section {
+  padding: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.version-section h2,
+.ping-section h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+}
+
+.version-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.version-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.version-row .label {
+  font-weight: 600;
+  color: #aaa;
+}
+
+.version-row .value {
+  font-family: monospace;
+  color: #fff;
+}
+
+.ping-button {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #646cff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.ping-button:hover:not(:disabled) {
+  background-color: #535bf2;
+}
+
+.ping-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ping-response {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: rgba(100, 108, 255, 0.1);
+  border: 1px solid rgba(100, 108, 255, 0.3);
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.hint {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #888;
+  font-style: italic;
+}
