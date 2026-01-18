@@ -218,7 +218,11 @@ export function PracticeScreen() {
         />
       )}
 
-      <DevPanel gameState={gameState} legalActions={legalActions} />
+      <DevPanel 
+        gameState={gameState} 
+        legalActions={legalActions}
+        onStateChange={setGameState}
+      />
     </div>
   );
 }

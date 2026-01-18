@@ -3,7 +3,8 @@ use serde_json::json;
 use crate::{State, DraftAction};
 use crate::rules::{
     list_legal_actions as list_legal_actions_internal,
-    apply_action as apply_action_internal
+    apply_action as apply_action_internal,
+    resolve_end_of_round as resolve_end_of_round_internal
 };
 
 /// Helper function to serialize errors consistently
@@ -121,6 +122,52 @@ pub fn apply_action(state_json: &str, action_json: &str) -> String {
                     "code": validation_error.code,
                     "message": validation_error.message,
                     "context": validation_error.context,
+                }
+            });
+            serde_json::to_string(&error).unwrap()
+        }
+    }
+}
+
+/// Resolve end of round: score tiles, apply penalties, refill factories
+///
+/// # Arguments
+/// * `state_json` - JSON string representing game state
+///
+/// # Returns
+/// JSON string: either new state or error object
+#[wasm_bindgen]
+pub fn resolve_end_of_round(state_json: &str) -> String {
+    // Parse state
+    let state: State = match serde_json::from_str(state_json) {
+        Ok(s) => s,
+        Err(e) => {
+            return serialize_error(
+                "INVALID_STATE_JSON",
+                &format!("Failed to parse state: {}", e),
+                None
+            );
+        }
+    };
+    
+    // Resolve end of round
+    match resolve_end_of_round_internal(&state) {
+        Ok(new_state) => {
+            match serde_json::to_string(&new_state) {
+                Ok(json) => json,
+                Err(e) => serialize_error(
+                    "SERIALIZATION_ERROR",
+                    &format!("Failed to serialize state: {}", e),
+                    None
+                )
+            }
+        }
+        Err(e) => {
+            let error = json!({
+                "error": {
+                    "code": e.code,
+                    "message": e.message,
+                    "context": e.context,
                 }
             });
             serde_json::to_string(&error).unwrap()

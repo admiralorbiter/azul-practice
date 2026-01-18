@@ -187,3 +187,39 @@ export function countTiles(multiset: TileMultiset, color: string): number {
 export function totalTiles(multiset: TileMultiset): number {
   return Object.values(multiset).reduce((sum, count) => sum + count, 0);
 }
+
+/**
+ * Resolve end-of-round: score tiles, apply penalties, refill factories.
+ * 
+ * Orchestrates complete end-of-round flow:
+ * 1. Pattern line resolution with wall scoring
+ * 2. Floor penalty application
+ * 3. Floor cleanup and first player determination
+ * 4. Game end detection
+ * 5. Factory refill for next round (if game continues)
+ * 
+ * @param state - Current game state (drafting phase should be complete)
+ * @returns Updated state for next round or error
+ */
+export function resolveEndOfRound(
+  state: GameState
+): GameState | EngineError {
+  try {
+    const resultJson = wasm.resolve_end_of_round(JSON.stringify(state));
+    const result = JSON.parse(resultJson);
+    
+    if (isError(result)) {
+      console.error('Engine error:', result.error);
+    }
+    
+    return result;
+  } catch (e) {
+    return {
+      error: {
+        code: 'JS_ERROR',
+        message: `JavaScript error: ${e}`,
+        context: { exception: String(e) }
+      }
+    };
+  }
+}

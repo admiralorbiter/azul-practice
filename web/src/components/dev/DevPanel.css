@@ -220,4 +220,30 @@
   .dev-btn:hover {
     background-color: #ddd;
   }
+  
+  .resolve-round-btn {
+    background-color: #81c784;
+    border-color: #66bb6a;
+  }
+  
+  .resolve-round-btn:hover:not(:disabled) {
+    background-color: #66bb6a;
+  }
+}
+
+.resolve-round-btn {
+  background: #4caf50;
+  color: white;
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+.resolve-round-btn:hover:not(:disabled) {
+  background: #45a049;
+}
+
+.resolve-round-btn:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  color: #666;
 }

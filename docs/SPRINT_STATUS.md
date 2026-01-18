@@ -1,6 +1,6 @@
 # Sprint Status Tracker
 
-**Last Updated:** January 18, 2026
+**Last Updated:** January 18, 2026 (Sprint 03 Complete)
 
 ## Overview
 
@@ -69,6 +69,44 @@ This document tracks the completion status of all sprints for the Azul Practice 
 
 ---
 
+### Sprint 03: End-of-Round Scoring & Refill
+**Status:** ✅ **COMPLETED**  
+**Completion Date:** January 18, 2026  
+**Documentation:** 
+- [Sprint_03_End_of_Round_Scoring_Refill.md](sprints/Sprint_03_End_of_Round_Scoring_Refill.md)
+- [Sprint_03C_COMPLETED.md](sprints/Sprint_03C_COMPLETED.md) (detailed report)
+
+**Sub-Sprints:**
+- ✅ **Sprint 03A:** Wall Tiling & Pattern Line Resolution
+- ✅ **Sprint 03B:** Scoring System with Golden Tests
+- ✅ **Sprint 03C:** Round Transition & Refill
+
+**Key Deliverables:**
+- **Pattern Line Resolution (03A):**
+  - `resolve_pattern_lines()` function with wall tile placement
+  - Excess tile discard to lid (capacity - 1)
+  - Pattern line cleanup after resolution
+  - 8 unit tests with tile conservation checks
+- **Scoring System (03B):**
+  - `calculate_wall_tile_score()` for adjacency scoring (horizontal + vertical)
+  - `calculate_floor_penalty()` with 7-slot penalty system
+  - `apply_floor_penalties()` with score clamping to 0
+  - 21 comprehensive tests (10 wall scoring, 6 floor penalty, 3 clamping, 3 integration)
+- **Round Transition (03C):**
+  - Complete `resolve_end_of_round()` orchestration function
+  - `refill_factories()` with bag/lid mechanics
+  - Game end detection (complete horizontal row)
+  - First player token handling
+  - WASM export and TypeScript wrapper
+  - Dev UI "Resolve End of Round" button
+  - 8 integration tests for full end-of-round flow
+- **Total Test Suite:** 112 tests passing (90 unit + 9 integration + 13 doc tests)
+
+**Known Issues Fixed:**
+- Graceful handling of invalid wall placements (skip instead of panic)
+
+---
+
 ## 🚧 In Progress Sprints
 
 *None currently*
@@ -76,26 +114,6 @@ This document tracks the completion status of all sprints for the Azul Practice 
 ---
 
 ## 📋 Planned Sprints
-
-### Sprint 03: End-of-Round Scoring & Refill
-**Status:** 📋 **PLANNED** (Subdivided into 3 focused sub-sprints)  
-**Documentation:** [Sprint_03_End_of_Round_Scoring_Refill.md](sprints/Sprint_03_End_of_Round_Scoring_Refill.md)
-
-**Sub-Sprints:**
-- 📋 **Sprint 03A:** Wall Tiling & Pattern Line Resolution
-- 📋 **Sprint 03B:** Scoring System with Golden Tests
-- 📋 **Sprint 03C:** Round Transition & Refill
-
-**Planned Work:**
-- Detect end-of-draft-phase
-- Wall tiling logic
-- Scoring (horizontal, vertical adjacency)
-- Floor line penalty application
-- Factory refill from bag/lid
-- Round completion and game end detection
-- WASM integration and UI button
-
-**Subdivision Rationale:** Following Sprint 1's successful pattern, Sprint 3 is broken into focused sub-sprints for incremental testing, clear dependencies, and easier debugging. Each sub-sprint has detailed documentation with algorithms, examples, and test requirements.
 
 ---
 
@@ -184,29 +202,40 @@ This is the natural next step as it completes the core game loop, enabling:
 - Foundation for scenario generation (Sprint 04)
 
 **Dependencies:**
-- Sprint 03 has no blockers (all prerequisites complete)
-  - Sub-sprint dependencies: 03A → 03B → 03C (sequential)
-- Sprint 04 depends on Sprint 03 (needs full game states)
-- Sprint 05 depends on Sprint 03 (needs complete game simulation)
+- Sprint 04 depends on Sprint 03 ✅ (complete - full game states available)
+- Sprint 05 depends on Sprint 03 ✅ (complete - full game simulation available)
 - Sprint 06 depends on Sprint 05 (needs move evaluation for feedback)
 
-**Sub-Sprint Details:**
+---
 
-**Sprint 03 Sub-Sprints (Planned):**
-- 📋 **Sprint 03A:** Wall Tiling & Pattern Line Resolution
-  - [Sprint_03A_Wall_Tiling_Pattern_Lines.md](sprints/Sprint_03A_Wall_Tiling_Pattern_Lines.md)
-  - Focus: Mechanical tile movement from pattern lines to wall/lid
-  - Estimated: 3-4 days
-  
-- 📋 **Sprint 03B:** Scoring System
-  - [Sprint_03B_Scoring_System.md](sprints/Sprint_03B_Scoring_System.md)
-  - Focus: Adjacency scoring and floor penalties with golden tests
-  - Estimated: 4-5 days
-  
-- 📋 **Sprint 03C:** Round Transition & Refill
-  - [Sprint_03C_Round_Transition_Refill.md](sprints/Sprint_03C_Round_Transition_Refill.md)
-  - Focus: Bag/lid mechanics, game end detection, WASM integration
-  - Estimated: 4-5 days
+## Files Created/Modified (Sprint 03)
+
+### New Files (2 Rust modules)
+**Rust Engine:**
+- `rust/engine/src/rules/resolution.rs` (~89 lines) - Pattern line resolution
+- `rust/engine/src/rules/scoring.rs` (~185 lines) - Wall scoring and floor penalties
+- `rust/engine/src/rules/refill.rs` (~80 lines) - Factory refill mechanics
+- `rust/engine/src/rules/end_of_round.rs` (~95 lines) - End-of-round orchestration
+
+### Modified Files
+**Rust:**
+- `rust/engine/Cargo.toml` - Added rand dependencies
+- `rust/engine/src/rules/mod.rs` - Exported new modules
+- `rust/engine/src/wasm_api.rs` - Added resolve_end_of_round export
+- `rust/engine/src/rules/tests.rs` - Added 37 new tests (~600 lines)
+
+**Web:**
+- `web/src/wasm/engine.ts` - Added resolveEndOfRound wrapper
+- `web/src/components/dev/DevPanel.tsx` - Added resolve button
+- `web/src/components/dev/DevPanel.css` - Button styles
+- `web/src/components/PracticeScreen.tsx` - Connected callback
+
+### Documentation
+- `docs/sprints/Sprint_03C_COMPLETED.md` - Detailed completion report
+- `docs/SPRINT_STATUS.md` - Updated completion status
+- Updated Sprint 03, 03A, 03B, 03C docs with completion markers
+
+**Total:** ~1,080 lines added (production + tests), 112 tests passing
 
 ---
 
@@ -259,7 +288,10 @@ npm run dev
 1. Load a scenario (Early/Mid/Late Game)
 2. Click factory → Select color → Click destination → Apply Move
 3. Verify state updates and player switches
-4. Open Dev Panel to inspect state
+4. Make moves until pattern lines are complete
+5. Open Dev Panel → Click "Resolve End of Round"
+6. Verify: scores update, wall tiles placed, factories refilled
+7. Continue playing into next round
 
 **Current capabilities:**
 - ✅ Load game states
@@ -268,8 +300,12 @@ npm run dev
 - ✅ Highlight legal moves
 - ✅ Error handling
 - ✅ Multi-move sequences
-- ❌ End-of-round logic (Sprint 03)
-- ❌ Full game completion (Sprint 03)
+- ✅ End-of-round resolution (Sprint 03)
+- ✅ Wall tile scoring with adjacency (Sprint 03)
+- ✅ Floor penalties and score clamping (Sprint 03)
+- ✅ Factory refill with bag/lid mechanics (Sprint 03)
+- ✅ Game end detection (Sprint 03)
+- ✅ Full game loop (draft → resolve → next round) (Sprint 03)
 - ❌ Scenario generation (Sprint 04)
 - ❌ Move evaluation (Sprint 05)
 - ❌ Drag-and-drop (Sprint 06)

@@ -1,9 +1,10 @@
 # Sprint 03B — Scoring System
 
-**Status:** Draft  
-**Prerequisites:** Sprint 03A (Wall Tiling) complete  
+**Status:** ✅ **COMPLETED**  
+**Completion Date:** January 18, 2026  
+**Prerequisites:** Sprint 03A (Wall Tiling) ✅ complete  
 **Dependencies:** Pattern line resolution, wall state  
-**Estimated Complexity:** Medium-High
+**Complexity:** Medium-High
 
 ---
 

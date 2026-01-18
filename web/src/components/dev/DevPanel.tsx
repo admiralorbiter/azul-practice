@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
-import { GameState, DraftAction } from '../../wasm/engine';
+import { GameState, DraftAction, resolveEndOfRound, isError } from '../../wasm/engine';
 import { getEngineVersion, VersionInfo } from '../../wasm/loader';
 import './DevPanel.css';
 
 interface DevPanelProps {
   gameState: GameState | null;
   legalActions: DraftAction[] | null;
+  onStateChange?: (newState: GameState) => void;
 }
 
-export function DevPanel({ gameState, legalActions }: DevPanelProps) {
+export function DevPanel({ gameState, legalActions, onStateChange }: DevPanelProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [version, setVersion] = useState<VersionInfo | null>(null);
   const [copyMessage, setCopyMessage] = useState<string>('');
@@ -33,6 +34,18 @@ export function DevPanel({ gameState, legalActions }: DevPanelProps) {
         setCopyMessage('Failed to copy');
         setTimeout(() => setCopyMessage(''), 3000);
       });
+  };
+
+  const handleResolveRound = () => {
+    if (!gameState || !onStateChange) return;
+    
+    const result = resolveEndOfRound(gameState);
+    
+    if (isError(result)) {
+      alert(`Error resolving round: ${result.error.message}`);
+    } else {
+      onStateChange(result);
+    }
   };
 
   const toggleExpanded = () => {
@@ -105,6 +118,17 @@ export function DevPanel({ gameState, legalActions }: DevPanelProps) {
                   </details>
                 </div>
               )}
+
+              <div className="dev-panel-section">
+                <h4>Round Actions</h4>
+                <button 
+                  onClick={handleResolveRound}
+                  disabled={!onStateChange}
+                  className="dev-btn resolve-round-btn"
+                >
+                  Resolve End of Round
+                </button>
+              </div>
             </>
           )}
         </div>

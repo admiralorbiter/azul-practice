@@ -4,6 +4,10 @@ mod wall_utils;
 mod error;
 mod invariants;
 mod apply;
+mod resolution;
+mod scoring;
+mod refill;
+mod end_of_round;
 
 #[cfg(test)]
 mod tests;
@@ -14,3 +18,7 @@ pub use wall_utils::*;
 pub use error::*;
 pub use invariants::*;
 pub use apply::*;
+pub use resolution::*;
+pub use scoring::*;
+pub use refill::*;
+pub use end_of_round::*;

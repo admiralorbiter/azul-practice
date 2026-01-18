@@ -1,9 +1,10 @@
 # Sprint 3 — End-of-Round + Scoring + Refill Rules
 
-**Status:** 📋 **PLANNED** (Subdivided)  
-**Subdivided Into:** 3 focused sub-sprints (03A, 03B, 03C)
+**Status:** ✅ **COMPLETED**  
+**Completion Date:** January 18, 2026  
+**Subdivided Into:** 3 focused sub-sprints (03A, 03B, 03C) - All Complete
 
-> **Note:** This sprint has been subdivided into 3 focused sub-sprints for better organization and incremental implementation. See the [Subdivision Overview](#subdivision-overview) section below.
+> **Note:** This sprint was subdivided into 3 focused sub-sprints for better organization and incremental implementation. All sub-sprints are now complete. See [Sprint_03C_COMPLETED.md](Sprint_03C_COMPLETED.md) for detailed completion report.
 
 **Goal:** Engine can resolve end-of-round deterministically and score correctly, enabling realistic scenario generation and rollout evaluation later.
 
@@ -119,36 +120,37 @@ graph TD
 
 The detailed tasks for this sprint are organized within the sub-sprint documents:
 
-### Sprint 03A Tasks 📋 Planned
-- [ ] Implement `resolve_pattern_lines` function
-- [ ] Place tiles on wall at correct positions
-- [ ] Discard excess tiles to lid (capacity - 1)
-- [ ] Reset pattern lines after resolution
-- [ ] Add tile conservation checks
-- [ ] Unit tests for pattern line resolution
+### Sprint 03A Tasks ✅ Completed
+- [x] Implement `resolve_pattern_lines` function
+- [x] Place tiles on wall at correct positions
+- [x] Discard excess tiles to lid (capacity - 1)
+- [x] Reset pattern lines after resolution
+- [x] Add tile conservation checks
+- [x] Unit tests for pattern line resolution (8 tests)
 - See [Sprint_03A_Wall_Tiling_Pattern_Lines.md](Sprint_03A_Wall_Tiling_Pattern_Lines.md) for details
 
-### Sprint 03B Tasks 📋 Planned
-- [ ] Implement `calculate_wall_tile_score` function
-- [ ] Horizontal adjacency scoring algorithm
-- [ ] Vertical adjacency scoring algorithm
-- [ ] Implement `calculate_floor_penalty` function
-- [ ] Floor penalty with first-player token handling
-- [ ] Score clamping (cannot go below 0)
-- [ ] Create 10+ golden test scenarios
-- [ ] Unit tests for all scoring functions
+### Sprint 03B Tasks ✅ Completed
+- [x] Implement `calculate_wall_tile_score` function
+- [x] Horizontal adjacency scoring algorithm
+- [x] Vertical adjacency scoring algorithm
+- [x] Implement `calculate_floor_penalty` function
+- [x] Floor penalty with first-player token handling
+- [x] Score clamping (cannot go below 0)
+- [x] Create 10+ golden test scenarios (21 tests total)
+- [x] Unit tests for all scoring functions
 - See [Sprint_03B_Scoring_System.md](Sprint_03B_Scoring_System.md) for details
 
-### Sprint 03C Tasks 📋 Planned
-- [ ] Implement complete `resolve_end_of_round` function
-- [ ] Floor line cleanup (discard to lid)
-- [ ] First player determination logic
-- [ ] Game end detection (complete horizontal row)
-- [ ] Implement `refill_factories` function
-- [ ] Bag refill from lid when insufficient
-- [ ] Handle partial factory fill edge case
-- [ ] WASM export for `resolve_end_of_round`
-- [ ] TypeScript wrapper and types
-- [ ] Dev UI button integration
-- [ ] Integration tests for full end-of-round flow
+### Sprint 03C Tasks ✅ Completed
+- [x] Implement complete `resolve_end_of_round` function
+- [x] Floor line cleanup (discard to lid)
+- [x] First player determination logic
+- [x] Game end detection (complete horizontal row)
+- [x] Implement `refill_factories` function
+- [x] Bag refill from lid when insufficient
+- [x] Handle partial factory fill edge case
+- [x] WASM export for `resolve_end_of_round`
+- [x] TypeScript wrapper and types
+- [x] Dev UI button integration
+- [x] Integration tests for full end-of-round flow (8 tests)
+- [x] Graceful handling of invalid states (bug fix)
 - See [Sprint_03C_Round_Transition_Refill.md](Sprint_03C_Round_Transition_Refill.md) for details
