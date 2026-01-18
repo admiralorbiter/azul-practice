@@ -78,16 +78,24 @@ This document tracks the completion status of all sprints for the Azul Practice 
 ## 📋 Planned Sprints
 
 ### Sprint 03: End-of-Round Scoring & Refill
-**Status:** 📋 **PLANNED**  
+**Status:** 📋 **PLANNED** (Subdivided into 3 focused sub-sprints)  
 **Documentation:** [Sprint_03_End_of_Round_Scoring_Refill.md](sprints/Sprint_03_End_of_Round_Scoring_Refill.md)
+
+**Sub-Sprints:**
+- 📋 **Sprint 03A:** Wall Tiling & Pattern Line Resolution
+- 📋 **Sprint 03B:** Scoring System with Golden Tests
+- 📋 **Sprint 03C:** Round Transition & Refill
 
 **Planned Work:**
 - Detect end-of-draft-phase
 - Wall tiling logic
-- Scoring (horizontal, vertical, color bonuses)
+- Scoring (horizontal, vertical adjacency)
 - Floor line penalty application
 - Factory refill from bag/lid
 - Round completion and game end detection
+- WASM integration and UI button
+
+**Subdivision Rationale:** Following Sprint 1's successful pattern, Sprint 3 is broken into focused sub-sprints for incremental testing, clear dependencies, and easier debugging. Each sub-sprint has detailed documentation with algorithms, examples, and test requirements.
 
 ---
 
@@ -146,15 +154,22 @@ This document tracks the completion status of all sprints for the Azul Practice 
 
 **Completion Summary:**
 - ✅ Completed: 3 sprints (00, 01, 02)
+  - Including 4 Sprint 01 sub-sprints (01A, 01B, 01C, 01D)
 - 🚧 In Progress: 0 sprints
 - 📋 Planned: 5 sprints (03, 04, 05, 06, 07)
+  - Including 3 Sprint 03 sub-sprints (03A, 03B, 03C)
 
 **Progress:**
-- **37.5%** complete (3 of 8 total sprints)
-- **Core engine:** 100% complete
-- **Basic UI:** 100% complete
-- **Game logic:** 0% (waiting on Sprint 03)
+- **37.5%** complete (3 of 8 major sprints)
+- **Core engine:** 100% complete (Sprint 01: 4 sub-sprints)
+- **Basic UI:** 100% complete (Sprint 02)
+- **Game logic:** 0% (waiting on Sprint 03: 3 sub-sprints)
 - **AI/Evaluation:** 0% (waiting on Sprint 05)
+
+**Subdivision Approach:**
+- Sprint 1 was subdivided into 4 focused sub-sprints ✅ Completed
+- Sprint 3 is subdivided into 3 focused sub-sprints 📋 Planned
+- This approach enables incremental validation and clearer dependencies
 
 ---
 
@@ -170,9 +185,28 @@ This is the natural next step as it completes the core game loop, enabling:
 
 **Dependencies:**
 - Sprint 03 has no blockers (all prerequisites complete)
+  - Sub-sprint dependencies: 03A → 03B → 03C (sequential)
 - Sprint 04 depends on Sprint 03 (needs full game states)
 - Sprint 05 depends on Sprint 03 (needs complete game simulation)
 - Sprint 06 depends on Sprint 05 (needs move evaluation for feedback)
+
+**Sub-Sprint Details:**
+
+**Sprint 03 Sub-Sprints (Planned):**
+- 📋 **Sprint 03A:** Wall Tiling & Pattern Line Resolution
+  - [Sprint_03A_Wall_Tiling_Pattern_Lines.md](sprints/Sprint_03A_Wall_Tiling_Pattern_Lines.md)
+  - Focus: Mechanical tile movement from pattern lines to wall/lid
+  - Estimated: 3-4 days
+  
+- 📋 **Sprint 03B:** Scoring System
+  - [Sprint_03B_Scoring_System.md](sprints/Sprint_03B_Scoring_System.md)
+  - Focus: Adjacency scoring and floor penalties with golden tests
+  - Estimated: 4-5 days
+  
+- 📋 **Sprint 03C:** Round Transition & Refill
+  - [Sprint_03C_Round_Transition_Refill.md](sprints/Sprint_03C_Round_Transition_Refill.md)
+  - Focus: Bag/lid mechanics, game end detection, WASM integration
+  - Estimated: 4-5 days
 
 ---
 
