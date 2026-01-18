@@ -1,4 +1,9 @@
-import initWasmModule, { get_version, ping } from '../wasm/pkg/engine'
+import initWasmModule, { 
+  get_version, 
+  ping,
+  list_legal_actions,
+  apply_action
+} from '../wasm/pkg/engine'
 
 let initialized = false
 
@@ -41,3 +46,6 @@ export async function pingEngine(): Promise<PingResponse> {
   const jsonStr = ping()
   return JSON.parse(jsonStr) as PingResponse
 }
+
+// Re-export WASM functions
+export { list_legal_actions, apply_action }

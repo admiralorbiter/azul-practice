@@ -1,4 +1,10 @@
 mod version;
+mod model;
+mod rules;
+pub mod wasm_api;
+
+pub use model::*;
+pub use rules::*;
 
 use wasm_bindgen::prelude::*;
 use serde::{Deserialize, Serialize};

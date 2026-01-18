@@ -1,0 +1,130 @@
+{
+  "state_version": 1,
+  "ruleset_id": "azul_v1_2p",
+  "scenario_seed": "demo_scenario",
+  "active_player_id": 0,
+  "round_number": 2,
+  "draft_phase_progress": "MID",
+  "bag": {
+    "Blue": 10,
+    "Yellow": 12,
+    "Red": 9,
+    "Black": 11,
+    "White": 13
+  },
+  "lid": {
+    "Blue": 2,
+    "Red": 3
+  },
+  "factories": [
+    {
+      "Blue": 2,
+      "Red": 1,
+      "Yellow": 1
+    },
+    {
+      "Black": 3,
+      "White": 1
+    },
+    {},
+    {
+      "Blue": 1,
+      "Yellow": 3
+    },
+    {
+      "Red": 2,
+      "Black": 2
+    }
+  ],
+  "center": {
+    "tiles": {
+      "White": 2,
+      "Red": 1
+    },
+    "has_first_player_token": true
+  },
+  "players": [
+    {
+      "score": 12,
+      "pattern_lines": [
+        {
+          "capacity": 1,
+          "color": "Blue",
+          "count_filled": 1
+        },
+        {
+          "capacity": 2,
+          "color": "Red",
+          "count_filled": 2
+        },
+        {
+          "capacity": 3,
+          "color": null,
+          "count_filled": 0
+        },
+        {
+          "capacity": 4,
+          "color": "Yellow",
+          "count_filled": 3
+        },
+        {
+          "capacity": 5,
+          "color": null,
+          "count_filled": 0
+        }
+      ],
+      "wall": [
+        [true, false, false, false, false],
+        [false, false, true, false, false],
+        [false, false, false, true, false],
+        [false, false, false, false, false],
+        [false, false, false, false, false]
+      ],
+      "floor_line": {
+        "tiles": ["Black"],
+        "has_first_player_token": false
+      }
+    },
+    {
+      "score": 15,
+      "pattern_lines": [
+        {
+          "capacity": 1,
+          "color": null,
+          "count_filled": 0
+        },
+        {
+          "capacity": 2,
+          "color": null,
+          "count_filled": 0
+        },
+        {
+          "capacity": 3,
+          "color": "Blue",
+          "count_filled": 3
+        },
+        {
+          "capacity": 4,
+          "color": null,
+          "count_filled": 0
+        },
+        {
+          "capacity": 5,
+          "color": "White",
+          "count_filled": 4
+        }
+      ],
+      "wall": [
+        [false, true, false, false, false],
+        [false, false, false, true, false],
+        [false, false, false, false, true],
+        [true, false, false, false, false],
+        [false, false, false, false, false]
+      ],
+      "floor_line": {
+        "tiles": [],
+        "has_first_player_token": false
+      }
+    }
+  ]
+}

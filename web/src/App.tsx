@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import EngineStatus from './components/EngineStatus'
+import { EngineTester } from './components/EngineTester'
 import './App.css'
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>Azul Practice Tool</h1>
-        <p>Foundation WASM Pipeline - Sprint 00</p>
+        <p>Core Engine - Sprint 01D</p>
       </header>
 
       <main className="app-main">
@@ -39,7 +40,10 @@ function App() {
             <p>Loading WASM module...</p>
           </div>
         ) : (
-          <EngineStatus />
+          <>
+            <EngineStatus />
+            <EngineTester />
+          </>
         )}
       </main>
     </div>
