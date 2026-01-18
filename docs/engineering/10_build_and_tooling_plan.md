@@ -1,0 +1,25 @@
+# Build & Tooling Plan (Rust → WASM)
+
+## Toolchain
+- Rust stable
+- wasm-bindgen
+- wasm-pack (or equivalent)
+- Vite + React (web UI)
+
+## Local development workflow
+- `pnpm dev`: run UI
+- `pnpm wasm:dev`: rebuild wasm (watch)
+- Dev mode features:
+  - Rust logs forwarded to browser console
+  - Seed display/control
+  - Copy scenario JSON
+
+## CI pipeline (minimum)
+- `cargo fmt` + `cargo clippy`
+- `cargo test`
+- UI build
+- Golden scenario tests (engine correctness)
+
+## Artifacts
+- WASM bundle for web
+- Optional: scenario pack outputs
