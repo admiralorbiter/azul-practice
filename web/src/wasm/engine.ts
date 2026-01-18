@@ -63,7 +63,7 @@ export interface EngineError {
   error: {
     code: string;
     message: string;
-    context?: any;
+    context?: unknown;
   };
 }
 
@@ -71,15 +71,15 @@ export interface EngineError {
 // Type Guards
 // ============================================================================
 
-export function isError(result: any): result is EngineError {
-  return result && typeof result === 'object' && 'error' in result;
+export function isError(result: unknown): result is EngineError {
+  return result !== null && typeof result === 'object' && 'error' in result;
 }
 
-export function isGameState(result: any): result is GameState {
-  return result && typeof result === 'object' && 'state_version' in result;
+export function isGameState(result: unknown): result is GameState {
+  return result !== null && typeof result === 'object' && 'state_version' in result;
 }
 
-export function isDraftActionArray(result: any): result is DraftAction[] {
+export function isDraftActionArray(result: unknown): result is DraftAction[] {
   return Array.isArray(result);
 }
 

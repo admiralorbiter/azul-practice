@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import EngineStatus from './components/EngineStatus'
-import { EngineTester } from './components/EngineTester'
+import { PracticeScreen } from './components/PracticeScreen'
 import './App.css'
 
 function App() {
@@ -24,7 +23,7 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>Azul Practice Tool</h1>
-        <p>Core Engine - Sprint 01D</p>
+        <p>Sprint 02 - Interactive Board</p>
       </header>
 
       <main className="app-main">
@@ -40,10 +39,7 @@ function App() {
             <p>Loading WASM module...</p>
           </div>
         ) : (
-          <>
-            <EngineStatus />
-            <EngineTester />
-          </>
+          <PracticeScreen />
         )}
       </main>
     </div>

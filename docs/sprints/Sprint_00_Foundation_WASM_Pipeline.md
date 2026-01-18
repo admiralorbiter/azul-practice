@@ -1,5 +1,8 @@
 # Sprint 0 — Project Skeleton + WASM Pipeline
 
+**Status:** ✅ **COMPLETED**  
+**Completion Date:** Sprint 01 (prerequisite completed)
+
 **Goal:** Build/run the app end-to-end with a "hello engine" WASM call, and set up the foundation for a robust core (logging, deterministic seeds).
 
 ## Outcomes

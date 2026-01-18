@@ -1,5 +1,9 @@
 # Sprint 2 — UI v0: Board Renderer + Interaction Loop (Click-to-Move)
 
+**Status:** ✅ **COMPLETED**  
+**Completion Date:** January 18, 2026  
+**Detailed Report:** See [Sprint_02_COMPLETED.md](Sprint_02_COMPLETED.md)
+
 **Goal:** You can load a state, see the board, select a draft action, and apply it through the engine from the UI.
 
 ## Outcomes
@@ -47,9 +51,20 @@
 ## Dependencies
 - Sprint 1 engine exports stable enough for UI calls
 
-## Sprint Backlog (Suggested Tasks)
-- [ ] Build core board components (Factories, Center, PlayerBoard)
-- [ ] Add selection model (source→color→destination)
-- [ ] Highlight legal actions
-- [ ] Integrate apply_action and refresh state
-- [ ] Add dev panel with seed/version/state JSON
+## Sprint Backlog (Suggested Tasks) ✅ COMPLETED
+- [x] Build core board components (Factories, Center, PlayerBoard)
+- [x] Add selection model (source→color→destination)
+- [x] Highlight legal actions
+- [x] Integrate apply_action and refresh state
+- [x] Add dev panel with seed/version/state JSON
+
+## What Was Delivered
+
+See [Sprint_02_COMPLETED.md](Sprint_02_COMPLETED.md) for full details, but highlights include:
+
+- **26 files created** (11 board components, 3 UI components, hooks, styles)
+- **Full click interaction flow** with color picker and legal move highlighting
+- **Error handling** with toast notifications
+- **Dev panel** with state inspection and debugging tools
+- **3 test scenarios** (early, mid, late game)
+- **Tile conservation bug fix** (scenarios now have correct 100-tile counts)

@@ -1,0 +1,64 @@
+.pattern-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.pattern-line-label {
+  font-size: 0.75rem;
+  color: #888;
+  font-weight: 600;
+  min-width: 16px;
+  text-align: center;
+}
+
+.pattern-line-tiles {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.pattern-tile {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.pattern-tile--filled {
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.pattern-tile--empty {
+  border: 2px dashed #444;
+  background-color: transparent;
+}
+
+.pattern-line--clickable {
+  cursor: pointer;
+}
+
+.pattern-line--highlighted {
+  background-color: rgba(76, 175, 80, 0.15);
+  outline: 2px solid #4CAF50;
+  outline-offset: 2px;
+}
+
+.pattern-line--clickable:hover {
+  background-color: rgba(76, 175, 80, 0.25);
+  outline: 3px solid #4CAF50;
+}
+
+@media (prefers-color-scheme: light) {
+  .pattern-tile--empty {
+    border-color: #ccc;
+  }
+  
+  .pattern-line--highlighted {
+    background-color: rgba(76, 175, 80, 0.1);
+  }
+}

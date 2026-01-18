@@ -1,0 +1,223 @@
+.dev-panel {
+  margin-top: 32px;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background-color: #1a1a1a;
+  overflow: hidden;
+}
+
+.dev-panel-toggle {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #2a2a2a;
+  border: none;
+  color: #888;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.dev-panel-toggle:hover {
+  background-color: #333;
+  color: #aaa;
+}
+
+.dev-panel-icon {
+  font-size: 0.7rem;
+  display: inline-block;
+  width: 12px;
+  transition: transform 0.2s ease;
+}
+
+.dev-panel-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dev-panel-section {
+  border-bottom: 1px solid #333;
+  padding-bottom: 16px;
+}
+
+.dev-panel-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.dev-panel-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 0.85rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dev-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dev-info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.dev-label {
+  color: #888;
+  font-weight: 500;
+}
+
+.dev-value {
+  color: #4A90E2;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+}
+
+.dev-actions {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dev-btn {
+  padding: 8px 16px;
+  background-color: #444;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dev-btn:hover {
+  background-color: #555;
+  border-color: #666;
+}
+
+.dev-copy-message {
+  font-size: 0.8rem;
+  color: #4CAF50;
+  font-style: italic;
+}
+
+.dev-details {
+  margin-top: 8px;
+}
+
+.dev-details summary {
+  cursor: pointer;
+  padding: 8px;
+  background-color: #2a2a2a;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #aaa;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.dev-details summary:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+.dev-details[open] summary {
+  margin-bottom: 12px;
+  background-color: #333;
+}
+
+.dev-json {
+  background-color: #0a0a0a;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: 12px;
+  overflow-x: auto;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: #aaa;
+  font-family: 'Courier New', monospace;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+@media (prefers-color-scheme: light) {
+  .dev-panel {
+    background-color: #f5f5f5;
+    border-color: #ddd;
+  }
+  
+  .dev-panel-toggle {
+    background-color: #e5e5e5;
+    color: #666;
+  }
+  
+  .dev-panel-toggle:hover {
+    background-color: #ddd;
+    color: #333;
+  }
+  
+  .dev-panel-section {
+    border-bottom-color: #ddd;
+  }
+  
+  .dev-panel-section h4 {
+    color: #666;
+  }
+  
+  .dev-label {
+    color: #666;
+  }
+  
+  .dev-details summary {
+    background-color: #e5e5e5;
+    color: #666;
+  }
+  
+  .dev-details summary:hover {
+    background-color: #ddd;
+    color: #333;
+  }
+  
+  .dev-details[open] summary {
+    background-color: #ddd;
+  }
+  
+  .dev-json {
+    background-color: #fff;
+    border-color: #ddd;
+    color: #333;
+  }
+  
+  .dev-btn {
+    background-color: #e5e5e5;
+    border-color: #ccc;
+    color: #333;
+  }
+  
+  .dev-btn:hover {
+    background-color: #ddd;
+  }
+}

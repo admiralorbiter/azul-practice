@@ -1,0 +1,218 @@
+.practice-screen {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.practice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.practice-header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #fff;
+}
+
+.practice-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.practice-info {
+  display: flex;
+  gap: 24px;
+  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.info-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.info-label {
+  font-size: 0.85rem;
+  color: #888;
+  font-weight: 600;
+}
+
+.info-value {
+  font-size: 0.95rem;
+  color: #fff;
+  font-weight: 500;
+}
+
+.practice-empty {
+  text-align: center;
+  padding: 64px 24px;
+  color: #888;
+}
+
+.practice-empty p {
+  font-size: 1.1rem;
+}
+
+.action-confirmation {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2a2a2a;
+  border: 2px solid #4A90E2;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateX(-50%) translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+.action-description {
+  margin-bottom: 16px;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.action-description strong {
+  color: #4A90E2;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.selection-hint {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2a2a2a;
+  border: 2px solid #4CAF50;
+  border-radius: 12px;
+  padding: 16px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  animation: slideUp 0.3s ease;
+  text-align: center;
+}
+
+.selection-hint p {
+  margin: 0 0 12px 0;
+  color: #fff;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #4A90E2;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #357ABD;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background-color: #555;
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background-color: #666;
+}
+
+.btn-small {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .practice-screen {
+    padding: 16px;
+  }
+  
+  .practice-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .practice-controls {
+    width: 100%;
+  }
+  
+  .practice-controls button {
+    flex: 1;
+  }
+  
+  .action-confirmation,
+  .selection-hint {
+    left: 16px;
+    right: 16px;
+    transform: none;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .practice-header h2 {
+    color: #333;
+  }
+  
+  .practice-info {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  .info-value {
+    color: #333;
+  }
+  
+  .action-confirmation,
+  .selection-hint {
+    background-color: #fff;
+  }
+  
+  .action-description {
+    color: #333;
+  }
+  
+  .selection-hint p {
+    color: #333;
+  }
+}
