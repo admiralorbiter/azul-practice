@@ -190,6 +190,67 @@
   }
 }
 
+/* Phase selector styles */
+.phase-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.phase-selector label {
+  font-size: 0.9rem;
+  color: #aaa;
+  font-weight: 600;
+}
+
+.phase-select {
+  padding: 8px 12px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background-color: #2a2a2a;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.phase-select:hover {
+  border-color: #4A90E2;
+  background-color: #333;
+}
+
+.phase-select:focus {
+  outline: none;
+  border-color: #4A90E2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+/* Legacy scenarios dropdown */
+.legacy-scenarios {
+  margin-left: 8px;
+}
+
+.legacy-scenarios summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #888;
+  padding: 8px 12px;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.legacy-scenarios summary:hover {
+  color: #aaa;
+}
+
+.legacy-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #333;
+}
+
 @media (prefers-color-scheme: light) {
   .practice-header h2 {
     color: #333;
@@ -214,5 +275,24 @@
   
   .selection-hint p {
     color: #333;
+  }
+
+  .phase-selector label {
+    color: #555;
+  }
+
+  .phase-select {
+    background-color: #fff;
+    border-color: #ccc;
+    color: #333;
+  }
+
+  .phase-select:hover {
+    border-color: #4A90E2;
+    background-color: #f5f5f5;
+  }
+
+  .legacy-buttons {
+    border-top-color: #ddd;
   }
 }

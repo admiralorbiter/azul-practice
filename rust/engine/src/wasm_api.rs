@@ -4,7 +4,9 @@ use crate::{State, DraftAction};
 use crate::rules::{
     list_legal_actions as list_legal_actions_internal,
     apply_action as apply_action_internal,
-    resolve_end_of_round as resolve_end_of_round_internal
+    resolve_end_of_round as resolve_end_of_round_internal,
+    GeneratorParamsJson,
+    generate_scenario_with_filters,
 };
 
 /// Helper function to serialize errors consistently
@@ -171,6 +173,82 @@ pub fn resolve_end_of_round(state_json: &str) -> String {
                 }
             });
             serde_json::to_string(&error).unwrap()
+        }
+    }
+}
+
+/// Generate a practice scenario using play-forward method
+///
+/// Creates a plausible game state by:
+/// 1. Starting from legal round start
+/// 2. Playing forward N moves with policy bots
+/// 3. Applying quality filters
+/// 4. Tagging phase based on progress
+///
+/// # Arguments
+/// * `params_json` - JSON string with optional parameters:
+///   - targetPhase: "EARLY" | "MID" | "LATE" (default: random)
+///   - seed: string seed for reproducibility (default: random)
+///   - policyMix: "random" | "greedy" | "mixed" (default: "mixed")
+///   - filterConfig: { minLegalActions, minUniqueDestinations }
+///
+/// # Returns
+/// JSON string: either new game state or error object
+///
+/// # Example
+/// ```javascript
+/// const params = {
+///   targetPhase: "MID",
+///   seed: "12345",
+///   policyMix: "mixed"
+/// };
+/// const result = generate_scenario(JSON.stringify(params));
+/// ```
+#[wasm_bindgen]
+pub fn generate_scenario(params_json: &str) -> String {
+    // Parse params (empty object is valid - all fields optional)
+    let params: GeneratorParamsJson = match serde_json::from_str(params_json) {
+        Ok(p) => p,
+        Err(e) => {
+            return serialize_error(
+                "INVALID_PARAMS_JSON",
+                &format!("Failed to parse params: {}", e),
+                Some(json!({"parse_error": e.to_string()}))
+            );
+        }
+    };
+    
+    // Convert to internal params
+    let (generator_params, filter_config) = match params.to_internal() {
+        Ok(p) => p,
+        Err(e) => {
+            return serialize_error(
+                "INVALID_PARAMS",
+                &e,
+                None
+            );
+        }
+    };
+    
+    // Generate with filters and retry logic (max 100 attempts).
+    // Note: generator has fallback so this should not error for filter reasons.
+    match generate_scenario_with_filters(generator_params, filter_config, 100) {
+        Ok(state) => {
+            match serde_json::to_string(&state) {
+                Ok(json) => json,
+                Err(e) => serialize_error(
+                    "SERIALIZATION_ERROR",
+                    &format!("Failed to serialize state: {}", e),
+                    None
+                )
+            }
+        }
+        Err(e) => {
+            serialize_error(
+                "GENERATION_FAILED",
+                &format!("Scenario generation failed: {}", e),
+                Some(json!({"max_attempts": 100}))
+            )
         }
     }
 }

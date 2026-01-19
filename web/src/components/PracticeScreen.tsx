@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { GameState, DraftAction, ActionSource, isError, listLegalActions, applyAction, describeAction } from '../wasm/engine';
+import { GameState, DraftAction, ActionSource, isError, listLegalActions, applyAction, describeAction, generateScenario } from '../wasm/engine';
 import { GameBoard } from './board/GameBoard';
 import { ColorPicker } from './ui/ColorPicker';
 import { ErrorToast } from './ui/ErrorToast';
@@ -13,6 +13,7 @@ export function PracticeScreen() {
   const [legalActions, setLegalActions] = useState<DraftAction[] | null>(null);
   const [error, setError] = useState<{ message: string; code?: string } | null>(null);
   const [colorPickerState, setColorPickerState] = useState<{ source: ActionSource; colors: string[] } | null>(null);
+  const [selectedPhase, setSelectedPhase] = useState<'ANY' | 'EARLY' | 'MID' | 'LATE'>('ANY');
 
   const {
     selectionState,
@@ -40,6 +41,21 @@ export function PracticeScreen() {
     setGameState(TEST_SCENARIOS[scenarioKey]);
     cancelSelection();
     setError(null);
+  };
+
+  const handleGenerateScenario = () => {
+    const result = generateScenario({
+      targetPhase: selectedPhase === 'ANY' ? undefined : selectedPhase,
+      policyMix: 'mixed', // Good default: 70% greedy, 30% random
+    });
+
+    if (isError(result)) {
+      setError({ message: result.error.message, code: result.error.code });
+    } else {
+      setGameState(result);
+      cancelSelection();
+      setError(null);
+    }
   };
 
   const handleFactorySelect = (factoryIndex: number) => {
@@ -132,15 +148,39 @@ export function PracticeScreen() {
       <div className="practice-header">
         <h2>Practice Mode</h2>
         <div className="practice-controls">
-          <button onClick={() => loadScenario('early')} className="btn btn-secondary">
-            Load Early Game
+          <div className="phase-selector">
+            <label htmlFor="phase-select">Phase:</label>
+            <select 
+              id="phase-select"
+              value={selectedPhase}
+              onChange={(e) => setSelectedPhase(e.target.value as 'ANY' | 'EARLY' | 'MID' | 'LATE')}
+              className="phase-select"
+            >
+              <option value="ANY">Any Phase</option>
+              <option value="EARLY">Early Game</option>
+              <option value="MID">Mid Game</option>
+              <option value="LATE">Late Game</option>
+            </select>
+          </div>
+          
+          <button onClick={handleGenerateScenario} className="btn btn-primary">
+            New Scenario
           </button>
-          <button onClick={() => loadScenario('mid')} className="btn btn-secondary">
-            Load Mid Game
-          </button>
-          <button onClick={() => loadScenario('late')} className="btn btn-secondary">
-            Load Late Game
-          </button>
+          
+          <details className="legacy-scenarios">
+            <summary>Load Test Scenarios</summary>
+            <div className="legacy-buttons">
+              <button onClick={() => loadScenario('early')} className="btn btn-secondary btn-small">
+                Test Early
+              </button>
+              <button onClick={() => loadScenario('mid')} className="btn btn-secondary btn-small">
+                Test Mid
+              </button>
+              <button onClick={() => loadScenario('late')} className="btn btn-secondary btn-small">
+                Test Late
+              </button>
+            </div>
+          </details>
         </div>
       </div>
 

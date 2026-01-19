@@ -91,8 +91,30 @@ export function DevPanel({ gameState, legalActions, onStateChange }: DevPanelPro
                     <span className="dev-value">{legalActions?.length || 0}</span>
                   </div>
                   <div className="dev-info-item">
+                    <span className="dev-label">Draft Phase:</span>
+                    <span className="dev-value">{gameState.draft_phase_progress}</span>
+                  </div>
+                  <div className="dev-info-item dev-info-item-full">
                     <span className="dev-label">Scenario Seed:</span>
-                    <span className="dev-value">{gameState.scenario_seed || 'N/A'}</span>
+                    <span className="dev-value dev-seed">
+                      {gameState.scenario_seed || 'N/A'}
+                    </span>
+                    {gameState.scenario_seed && (
+                      <button 
+                        onClick={() => {
+                          navigator.clipboard.writeText(gameState.scenario_seed!)
+                            .then(() => {
+                              setCopyMessage('Seed copied!');
+                              setTimeout(() => setCopyMessage(''), 2000);
+                            })
+                            .catch(err => console.error('Failed to copy seed:', err));
+                        }}
+                        className="dev-btn-inline"
+                        title="Copy seed"
+                      >
+                        📋
+                      </button>
+                    )}
                   </div>
                 </div>
                 <div className="dev-actions">

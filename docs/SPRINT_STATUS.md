@@ -1,6 +1,6 @@
 # Sprint Status Tracker
 
-**Last Updated:** January 18, 2026 (Sprint 03 Complete)
+**Last Updated:** January 19, 2026 (Sprint 04 Complete)
 
 ## Overview
 
@@ -107,6 +107,49 @@ This document tracks the completion status of all sprints for the Azul Practice 
 
 ---
 
+### Sprint 04: Scenario Generation
+**Status:** ✅ **COMPLETED**  
+**Completion Date:** January 19, 2026  
+**Documentation:** 
+- [Sprint_04_Scenario_Generation_Phases_Filters.md](sprints/Sprint_04_Scenario_Generation_Phases_Filters.md)
+- [Sprint_04_COMPLETED.md](sprints/Sprint_04_COMPLETED.md) (detailed report)
+
+**Key Deliverables:**
+- **Multi-Round Generation Strategy:**
+  - Early: 0 rounds complete + 3-8 picks (Round 1, empty walls)
+  - Mid: 1 round complete + 3-10 picks (Round 2, walls filled!)
+  - Late: 2 rounds complete + 2-8 picks (Round 3, walls more filled)
+- **Policy-Based Simulation:**
+  - `RandomPolicy` and `GreedyPolicy` implementations
+  - Policy mix configuration (AllRandom/AllGreedy/Mixed)
+  - Deterministic bot behavior with seeded RNG
+- **Quality Filters:**
+  - Minimum legal actions filter (default: 3)
+  - Unique destinations filter (default: 2)
+  - Hard fallback mechanism (never fails to generate)
+- **Seed-Based Reproducibility:**
+  - Deterministic RNG with seed storage in state
+  - Same seed generates identical scenario
+  - Seed display and copy in DevPanel
+- **Determinism Fixes:**
+  - `ALL_COLORS` constant for fixed iteration order
+  - Modified `refill_factories` for deterministic tile drawing
+  - Modified `list_legal_actions` for deterministic action enumeration
+- **UI Integration:**
+  - Phase selector dropdown (Early/Mid/Late Game)
+  - "New Scenario" button
+  - Enhanced DevPanel with seed, round number, phase display
+- **Total Test Suite:** 123 tests passing (121 from previous + 2 new wall-filling tests)
+
+**Critical Fix:**
+- **Wall Filling Issue:** Initial implementation only simulated picks within round 1, so walls were always empty. Redesigned to complete full rounds with `resolve_end_of_round()`, enabling realistic Mid/Late game scenarios with filled walls and non-zero scores.
+
+**Known Limitations:**
+- 2-player only (no 3/4-player support yet)
+- Greedy policy is heuristic-based (not optimal play)
+
+---
+
 ## 🚧 In Progress Sprints
 
 *None currently*
@@ -114,19 +157,6 @@ This document tracks the completion status of all sprints for the Azul Practice 
 ---
 
 ## 📋 Planned Sprints
-
----
-
-### Sprint 04: Scenario Generation
-**Status:** 📋 **PLANNED**  
-**Documentation:** [Sprint_04_Scenario_Generation_Phases_Filters.md](sprints/Sprint_04_Scenario_Generation_Phases_Filters.md)
-
-**Planned Work:**
-- Random scenario generation
-- Phase filters (EARLY, MID, LATE)
-- Difficulty estimation
-- Scenario validation
-- Seed-based reproducibility
 
 ---
 
@@ -171,39 +201,42 @@ This document tracks the completion status of all sprints for the Azul Practice 
 ## Statistics
 
 **Completion Summary:**
-- ✅ Completed: 3 sprints (00, 01, 02)
+- ✅ Completed: 4 sprints (00, 01, 02, 03, 04)
   - Including 4 Sprint 01 sub-sprints (01A, 01B, 01C, 01D)
-- 🚧 In Progress: 0 sprints
-- 📋 Planned: 5 sprints (03, 04, 05, 06, 07)
   - Including 3 Sprint 03 sub-sprints (03A, 03B, 03C)
+- 🚧 In Progress: 0 sprints
+- 📋 Planned: 3 sprints (05, 06, 07)
 
 **Progress:**
-- **37.5%** complete (3 of 8 major sprints)
+- **50%** complete (4 of 8 major sprints)
 - **Core engine:** 100% complete (Sprint 01: 4 sub-sprints)
 - **Basic UI:** 100% complete (Sprint 02)
-- **Game logic:** 0% (waiting on Sprint 03: 3 sub-sprints)
-- **AI/Evaluation:** 0% (waiting on Sprint 05)
+- **Game logic:** 100% complete (Sprint 03: 3 sub-sprints)
+- **Scenario generation:** 100% complete (Sprint 04)
+- **AI/Evaluation:** 0% (Sprint 05 next)
+- **Polish:** 0% (Sprint 06 planned)
 
 **Subdivision Approach:**
-- Sprint 1 was subdivided into 4 focused sub-sprints ✅ Completed
-- Sprint 3 is subdivided into 3 focused sub-sprints 📋 Planned
+- Sprint 1: Subdivided into 4 focused sub-sprints ✅ Completed
+- Sprint 3: Subdivided into 3 focused sub-sprints ✅ Completed
+- Sprint 4: Unified sprint (with iterative fixes) ✅ Completed
 - This approach enables incremental validation and clearer dependencies
 
 ---
 
 ## Next Steps
 
-**Immediate Priority:** Sprint 03 (End-of-Round Logic)
+**Immediate Priority:** Sprint 05 (Best Move Evaluation)
 
-This is the natural next step as it completes the core game loop, enabling:
-- Full game playthrough (not just draft moves)
-- Scoring validation
-- Multi-round gameplay
-- Foundation for scenario generation (Sprint 04)
+With scenarios now generating realistic game states, we can implement move evaluation:
+- Monte Carlo rollout evaluator
+- Multi-ply lookahead
+- Move ranking and quality scoring
+- Foundation for practice feedback (Sprint 06)
 
 **Dependencies:**
-- Sprint 04 depends on Sprint 03 ✅ (complete - full game states available)
 - Sprint 05 depends on Sprint 03 ✅ (complete - full game simulation available)
+- Sprint 05 depends on Sprint 04 ✅ (complete - policy infrastructure and scenarios available)
 - Sprint 06 depends on Sprint 05 (needs move evaluation for feedback)
 
 ---
@@ -306,6 +339,10 @@ npm run dev
 - ✅ Factory refill with bag/lid mechanics (Sprint 03)
 - ✅ Game end detection (Sprint 03)
 - ✅ Full game loop (draft → resolve → next round) (Sprint 03)
-- ❌ Scenario generation (Sprint 04)
+- ✅ Scenario generation with phase targeting (Sprint 04)
+- ✅ Multi-round simulation with realistic board progression (Sprint 04)
+- ✅ Seed-based reproducibility (Sprint 04)
+- ✅ Quality filters and robust generation (Sprint 04)
 - ❌ Move evaluation (Sprint 05)
 - ❌ Drag-and-drop (Sprint 06)
+- ❌ Move feedback and grading (Sprint 06)

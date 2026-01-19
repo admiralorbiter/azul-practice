@@ -1,5 +1,6 @@
 use crate::{State, DraftAction, ActionSource, Destination, PlayerBoard, TileColor};
 use super::wall_utils::get_wall_column_for_color;
+use super::constants::ALL_COLORS;
 
 /// List all legal draft actions for the given player in the given state
 ///
@@ -35,7 +36,8 @@ pub fn list_legal_actions(state: &State, player_id: u8) -> Vec<DraftAction> {
     
     // Check all factories
     for (factory_idx, factory) in state.factories.iter().enumerate() {
-        for (&color, &count) in factory.iter() {
+        for &color in &ALL_COLORS {
+            let count = factory.get(&color).copied().unwrap_or(0);
             if count > 0 {
                 // Try placing in each pattern line
                 for row in 0..5 {
@@ -59,7 +61,8 @@ pub fn list_legal_actions(state: &State, player_id: u8) -> Vec<DraftAction> {
     }
     
     // Check center
-    for (&color, &count) in state.center.tiles.iter() {
+    for &color in &ALL_COLORS {
+        let count = state.center.tiles.get(&color).copied().unwrap_or(0);
         if count > 0 {
             // Try placing in each pattern line
             for row in 0..5 {

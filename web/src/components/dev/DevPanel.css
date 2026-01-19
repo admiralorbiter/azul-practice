@@ -84,6 +84,11 @@
   font-size: 0.85rem;
 }
 
+.dev-info-item-full {
+  flex-direction: row;
+  gap: 8px;
+}
+
 .dev-label {
   color: #888;
   font-weight: 500;
@@ -93,6 +98,29 @@
   color: #4A90E2;
   font-family: 'Courier New', monospace;
   font-weight: 600;
+}
+
+.dev-seed {
+  font-family: monospace;
+  font-size: 0.8rem;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dev-btn-inline {
+  padding: 2px 8px;
+  font-size: 0.85rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.dev-btn-inline:hover {
+  opacity: 1;
 }
 
 .dev-actions {

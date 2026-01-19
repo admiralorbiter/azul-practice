@@ -8,6 +8,10 @@ mod resolution;
 mod scoring;
 mod refill;
 mod end_of_round;
+mod rng;
+mod policy;
+mod generator;
+mod filters;
 
 #[cfg(test)]
 mod tests;
@@ -22,3 +26,7 @@ pub use resolution::*;
 pub use scoring::*;
 pub use refill::*;
 pub use end_of_round::*;
+pub use rng::*;
+pub use policy::*;
+pub use generator::*;
+pub use filters::*;

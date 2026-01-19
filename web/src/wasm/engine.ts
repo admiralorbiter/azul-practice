@@ -223,3 +223,79 @@ export function resolveEndOfRound(
     };
   }
 }
+
+// ============================================================================
+// Scenario Generation
+// ============================================================================
+
+export interface GeneratorParams {
+  /** Target phase: "EARLY" | "MID" | "LATE" (default: random) */
+  targetPhase?: 'EARLY' | 'MID' | 'LATE';
+  /** Seed string for reproducibility (default: random) */
+  seed?: string;
+  /** Policy mix: "random" | "greedy" | "mixed" (default: "mixed") */
+  policyMix?: 'random' | 'greedy' | 'mixed';
+  /** Quality filter configuration */
+  filterConfig?: {
+    /** Minimum number of legal actions (default: 3) */
+    minLegalActions?: number;
+    /** Minimum number of unique destinations (default: 2) */
+    minUniqueDestinations?: number;
+  };
+}
+
+/**
+ * Generate a new practice scenario using play-forward method.
+ * 
+ * Creates a plausible game state by:
+ * 1. Starting from legal round start (full bag, factories filled)
+ * 2. Playing forward N moves with policy bots (random/greedy/mixed)
+ * 3. Applying quality filters (minimum actions, destination diversity)
+ * 4. Tagging phase based on actual progress (EARLY/MID/LATE)
+ * 
+ * All parameters are optional. If not provided, reasonable defaults are used:
+ * - targetPhase: Random selection
+ * - seed: Randomly generated
+ * - policyMix: "mixed" (70% greedy, 30% random)
+ * - filterConfig: minLegalActions=3, minUniqueDestinations=2
+ * 
+ * @param params - Generator configuration (all optional)
+ * @returns New game state or error
+ * 
+ * @example
+ * // Generate random scenario
+ * const state1 = generateScenario({});
+ * 
+ * // Generate early game scenario with specific seed
+ * const state2 = generateScenario({ 
+ *   targetPhase: 'EARLY',
+ *   seed: '12345'
+ * });
+ * 
+ * // Generate with pure greedy policy
+ * const state3 = generateScenario({ 
+ *   policyMix: 'greedy'
+ * });
+ */
+export function generateScenario(
+  params: GeneratorParams = {}
+): GameState | EngineError {
+  try {
+    const resultJson = wasm.generate_scenario(JSON.stringify(params));
+    const result = JSON.parse(resultJson);
+    
+    if (isError(result)) {
+      console.error('Generator error:', result.error);
+    }
+    
+    return result;
+  } catch (e) {
+    return {
+      error: {
+        code: 'JS_ERROR',
+        message: `JavaScript error: ${e}`,
+        context: { exception: String(e) }
+      }
+    };
+  }
+}

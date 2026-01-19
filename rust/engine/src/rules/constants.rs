@@ -10,6 +10,17 @@ pub const TILES_PER_COLOR: u8 = 20;
 /// Total number of tiles in the game (5 colors × 20 tiles)
 pub const TOTAL_TILES: u8 = 100;
 
+/// All tile colors in the game
+///
+/// Used for iteration when initializing scenarios or computing game state.
+pub const ALL_COLORS: [crate::model::TileColor; 5] = [
+    crate::model::TileColor::Blue,
+    crate::model::TileColor::Yellow,
+    crate::model::TileColor::Red,
+    crate::model::TileColor::Black,
+    crate::model::TileColor::White,
+];
+
 /// Number of penalty slots on the floor line
 pub const FLOOR_LINE_SLOTS: usize = 7;
 
