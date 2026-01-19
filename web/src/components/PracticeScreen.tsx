@@ -20,7 +20,7 @@ export function PracticeScreen() {
   const [selectedRoundStage, setSelectedRoundStage] = useState<'ANY' | 'START' | 'MID' | 'END'>('ANY');
   
   // Evaluation state
-  const [timeBudget, setTimeBudget] = useState<TimeBudget>(250);
+  const [timeBudget, setTimeBudget] = useState<TimeBudget>(1500);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [evaluationResult, setEvaluationResult] = useState<EvalResult | null>(null);
   const [userAction, setUserAction] = useState<DraftAction | null>(null);
