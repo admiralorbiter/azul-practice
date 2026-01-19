@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { GameState, DraftAction, resolveEndOfRound, isError, describeAction } from '../../wasm/engine';
 import { getEngineVersion, VersionInfo } from '../../wasm/loader';
 import { evaluateBestMove, EvaluationResult } from '../../wasm/evaluator';
+import { ThinkLongerControl, TimeBudget } from '../ui/ThinkLongerControl';
+import { createEvaluatorParams, DEFAULT_TIME_BUDGET } from '../../config/evaluator-config';
 import './DevPanel.css';
 
 interface DevPanelProps {
@@ -17,6 +19,7 @@ export function DevPanel({ gameState, legalActions, onStateChange }: DevPanelPro
   const [evaluating, setEvaluating] = useState(false);
   const [evaluationResult, setEvaluationResult] = useState<EvaluationResult | null>(null);
   const [evalError, setEvalError] = useState<string>('');
+  const [timeBudget, setTimeBudget] = useState<TimeBudget>(DEFAULT_TIME_BUDGET);
 
   useEffect(() => {
     getEngineVersion()
@@ -60,16 +63,8 @@ export function DevPanel({ gameState, legalActions, onStateChange }: DevPanelPro
     setEvaluationResult(null);
     
     try {
-      const result = evaluateBestMove(gameState, gameState.active_player_id, {
-        evaluator_seed: Date.now(),
-        time_budget_ms: 250,
-        rollouts_per_action: 10,
-        shortlist_size: 20,
-        rollout_config: {
-          active_player_policy: 'all_greedy',
-          opponent_policy: 'all_greedy'
-        }
-      });
+      const params = createEvaluatorParams(timeBudget);
+      const result = evaluateBestMove(gameState, gameState.active_player_id, params);
       
       setEvaluationResult(result);
     } catch (error) {
@@ -181,6 +176,11 @@ export function DevPanel({ gameState, legalActions, onStateChange }: DevPanelPro
 
               <div className="dev-panel-section">
                 <h4>Evaluation (Sprint 5B Test)</h4>
+                <ThinkLongerControl 
+                  value={timeBudget}
+                  onChange={setTimeBudget}
+                  disabled={evaluating}
+                />
                 <button 
                   onClick={handleEvaluate}
                   disabled={evaluating || !legalActions || legalActions.length === 0}

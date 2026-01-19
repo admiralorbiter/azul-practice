@@ -8,6 +8,7 @@ import { DevPanel } from './dev/DevPanel';
 import { EvaluationResult } from './EvaluationResult';
 import { ThinkLongerControl, TimeBudget } from './ui/ThinkLongerControl';
 import { useActionSelection } from '../hooks/useActionSelection';
+import { createEvaluatorParams, DEFAULT_TIME_BUDGET } from '../config/evaluator-config';
 import { TEST_SCENARIOS } from '../test-scenarios';
 import './PracticeScreen.css';
 
@@ -20,7 +21,7 @@ export function PracticeScreen() {
   const [selectedRoundStage, setSelectedRoundStage] = useState<'ANY' | 'START' | 'MID' | 'END'>('ANY');
   
   // Evaluation state
-  const [timeBudget, setTimeBudget] = useState<TimeBudget>(1500);
+  const [timeBudget, setTimeBudget] = useState<TimeBudget>(DEFAULT_TIME_BUDGET);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [evaluationResult, setEvaluationResult] = useState<EvalResult | null>(null);
   const [userAction, setUserAction] = useState<DraftAction | null>(null);
@@ -152,20 +153,10 @@ export function PracticeScreen() {
     setIsEvaluating(true);
     
     try {
-      // Adjust rollouts based on time budget (more time = more rollouts)
-      const rolloutsPerAction = Math.floor(timeBudget / 25);
+      const params = createEvaluatorParams(timeBudget);
       
       // Evaluate against the state BEFORE the move was applied
-      const result = gradeUserAction(stateBeforeMove, stateBeforeMove.active_player_id, userAction, {
-        evaluator_seed: Date.now(),
-        time_budget_ms: timeBudget,
-        rollouts_per_action: rolloutsPerAction,
-        shortlist_size: 20,
-        rollout_config: {
-          active_player_policy: 'all_greedy',
-          opponent_policy: 'all_greedy'
-        }
-      });
+      const result = gradeUserAction(stateBeforeMove, stateBeforeMove.active_player_id, userAction, params);
       
       setEvaluationResult(result);
     } catch (error) {
