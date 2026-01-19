@@ -1,6 +1,6 @@
 .evaluation-result {
   padding: 24px;
-  background: white;
+  background: var(--surface);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -16,28 +16,43 @@
   text-align: center;
 }
 
+.grade-badge.revealing {
+  animation: badge-reveal 500ms ease-out;
+}
+
+@keyframes badge-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .grade-badge.grade-excellent {
-  background: #d4edda;
-  border: 2px solid #28a745;
-  color: #155724;
+  background: rgba(16, 185, 129, 0.1);
+  border: 2px solid var(--grade-excellent);
+  color: #065f46;
 }
 
 .grade-badge.grade-good {
-  background: #d1ecf1;
-  border: 2px solid #17a2b8;
-  color: #0c5460;
+  background: rgba(59, 130, 246, 0.1);
+  border: 2px solid var(--grade-good);
+  color: #1e40af;
 }
 
 .grade-badge.grade-okay {
-  background: #fff3cd;
-  border: 2px solid #ffc107;
-  color: #856404;
+  background: rgba(245, 158, 11, 0.1);
+  border: 2px solid var(--grade-okay);
+  color: #92400e;
 }
 
 .grade-badge.grade-miss {
-  background: #f8d7da;
-  border: 2px solid #dc3545;
-  color: #721c24;
+  background: rgba(239, 68, 68, 0.1);
+  border: 2px solid var(--grade-miss);
+  color: #991b1b;
 }
 
 .grade-label {
@@ -57,7 +72,7 @@
   flex-direction: column;
   gap: 10px;
   padding: 16px;
-  background: #f8f9fa;
+  background: var(--background);
   border-radius: 6px;
 }
 
@@ -71,13 +86,13 @@
 .ev-row.delta {
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 2px solid #dee2e6;
+  border-top: 2px solid var(--border);
   font-weight: 600;
   font-size: 18px;
 }
 
 .ev-label {
-  color: #6c757d;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -88,11 +103,11 @@
 }
 
 .ev-value.negative {
-  color: #dc3545;
+  color: var(--error);
 }
 
 .ev-value.positive {
-  color: #28a745;
+  color: var(--success);
 }
 
 /* Feedback */
@@ -100,7 +115,7 @@
   margin: 0 0 12px 0;
   font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .feedback-list {
@@ -114,52 +129,77 @@
 
 .feedback-bullet {
   padding: 12px 16px;
-  background: #f8f9fa;
-  border-left: 4px solid #4A90E2;
+  background: var(--background);
+  border-left: 4px solid var(--primary);
   border-radius: 4px;
   font-size: 15px;
   line-height: 1.6;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .feedback-bullet.category-floor_penalty {
-  border-left-color: #dc3545;
+  border-left-color: var(--error);
 }
 
 .feedback-bullet.category-line_completion {
-  border-left-color: #28a745;
+  border-left-color: var(--success);
 }
 
 .feedback-bullet.category-wasted_tiles {
-  border-left-color: #ffc107;
+  border-left-color: var(--grade-okay);
 }
 
 .feedback-bullet.category-adjacency {
-  border-left-color: #17a2b8;
+  border-left-color: var(--accent);
 }
 
 .feedback-bullet.category-first_player_token {
-  border-left-color: #6c757d;
+  border-left-color: var(--text-secondary);
 }
 
 /* Best Move */
+.best-move-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .best-move-section h3 {
-  margin: 0 0 10px 0;
+  margin: 0;
   font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .best-move-description {
   padding: 14px 18px;
-  background: #e7f3ff;
-  border: 2px solid #4A90E2;
+  background: rgba(59, 130, 246, 0.05);
+  border: 2px solid var(--primary);
   border-radius: 6px;
   font-family: 'Courier New', monospace;
   font-size: 16px;
   font-weight: 600;
-  color: #0056b3;
+  color: var(--primary);
   text-align: center;
+}
+
+.btn-show-best-move {
+  padding: 10px 20px;
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-show-best-move:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
 /* Actions */
@@ -172,18 +212,20 @@
 
 .btn-primary {
   padding: 12px 32px;
-  background: #4A90E2;
+  background: var(--primary);
   color: white;
   border: none;
   border-radius: 6px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
-  background: #357ABD;
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 /* Diagnostics */
@@ -197,7 +239,7 @@
   cursor: pointer;
   font-weight: 600;
   font-size: 14px;
-  color: #6c757d;
+  color: var(--text-secondary);
   user-select: none;
   padding: 8px;
   border-radius: 4px;
@@ -205,11 +247,15 @@
 }
 
 .diagnostics summary:hover {
-  background: #f8f9fa;
+  background: var(--background);
 }
 
 .diagnostics[open] summary {
   margin-bottom: 12px;
+}
+
+.diagnostics {
+  border-top: 1px solid var(--border);
 }
 
 .diagnostics-content {
@@ -218,7 +264,7 @@
   flex-direction: column;
   gap: 6px;
   padding: 12px;
-  background: #f8f9fa;
+  background: var(--background);
   border-radius: 4px;
 }
 
@@ -226,78 +272,15 @@
   display: flex;
   justify-content: space-between;
   font-size: 14px;
-  color: #495057;
+  color: var(--text-primary);
 }
 
 .diagnostic-row span:first-child {
-  color: #6c757d;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
 .monospace {
   font-family: 'Courier New', monospace;
-  color: #4A90E2;
-}
-
-@media (prefers-color-scheme: dark) {
-  .evaluation-result {
-    background: #1a1a1a;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  }
-  
-  .ev-comparison {
-    background: #2a2a2a;
-  }
-  
-  .ev-row.delta {
-    border-top-color: #444;
-  }
-  
-  .ev-label {
-    color: #aaa;
-  }
-  
-  .ev-value {
-    color: #ccc;
-  }
-  
-  .feedback-section h3,
-  .best-move-section h3 {
-    color: #ccc;
-  }
-  
-  .feedback-bullet {
-    background: #2a2a2a;
-    color: #ccc;
-  }
-  
-  .best-move-description {
-    background: #1e3a5f;
-    border-color: #4A90E2;
-    color: #88c0ff;
-  }
-  
-  .diagnostics {
-    border-top-color: #444;
-  }
-  
-  .diagnostics summary {
-    color: #aaa;
-  }
-  
-  .diagnostics summary:hover {
-    background: #2a2a2a;
-  }
-  
-  .diagnostics-content {
-    background: #2a2a2a;
-  }
-  
-  .diagnostic-row {
-    color: #ccc;
-  }
-  
-  .diagnostic-row span:first-child {
-    color: #aaa;
-  }
+  color: var(--primary);
 }

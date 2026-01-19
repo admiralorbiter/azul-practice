@@ -1,7 +1,8 @@
 # Azul Best-Move Practice Tool (MVP) — Documentation Pack
 
-**Project Status:** 3 of 8 sprints complete (37.5%) - [View Details](SPRINT_STATUS.md)  
-**Last Updated:** January 18, 2026
+**Project Status:** 6 of 8 sprints complete (75%) - [View Details](SPRINT_STATUS.md)  
+**Last Updated:** January 19, 2026  
+**MVP Status:** ✅ **PRODUCTION-READY**
 
 This folder contains the v0 draft documents for the **Azul Best-Move Practice Tool**, designed for a **Rust core compiled to WebAssembly (WASM)** with a web UI.
 
@@ -9,10 +10,16 @@ This folder contains the v0 draft documents for the **Azul Best-Move Practice To
 
 **✅ Completed:**
 - Sprint 00: Foundation & WASM Pipeline
-- Sprint 01: Core Engine (Draft Phase)
+- Sprint 01: Core Engine (Draft Phase) - 4 sub-sprints
 - Sprint 02: UI v0 (Board Rendering & Click Interaction)
+- Sprint 03: End-of-Round Scoring & Refill - 3 sub-sprints
+- Sprint 04: Scenario Generation
+- Sprint 05: Best Move Evaluation - 3 sub-sprints
+- Sprint 06: Drag/Drop & UI Polish ⬅ **JUST COMPLETED**
 
-**🎯 Next:** Sprint 03 - End-of-Round Scoring & Refill
+**📋 Optional:** Sprint 07 - Advanced Features (3/4-player, enhanced policies)
+
+**🎉 MVP Complete:** The core practice loop is fully functional and polished, ready for user testing!
 
 See [SPRINT_STATUS.md](SPRINT_STATUS.md) for detailed progress tracking.
 
@@ -51,12 +58,12 @@ Generate a valid Azul scenario (2-player), let the user make a move on a polishe
 
 - **Sprints**
   - `sprints/Sprint_00_Foundation_WASM_Pipeline.md` - ✅ Complete
-  - `sprints/Sprint_01_Core_Engine_v0_State_Actions_Legality.md` - ✅ Complete
+  - `sprints/Sprint_01_Core_Engine_v0_State_Actions_Legality.md` - ✅ Complete (4 sub-sprints)
   - `sprints/Sprint_02_UI_v0_Board_Render_Click_Interactions.md` - ✅ Complete
-  - `sprints/Sprint_03_End_of_Round_Scoring_Refill.md` - 📋 Planned
-  - `sprints/Sprint_04_Scenario_Generation_Phases_Filters.md` - 📋 Planned
-  - `sprints/Sprint_05_Best_Move_Evaluator_Tier2_Think_Longer.md` - 📋 Planned
-  - `sprints/Sprint_06_Feedback_Explanations_DragDrop_Polish.md` - 📋 Planned
+  - `sprints/Sprint_03_End_of_Round_Scoring_Refill.md` - ✅ Complete (3 sub-sprints)
+  - `sprints/Sprint_04_Scenario_Generation_Phases_Filters.md` - ✅ Complete
+  - `sprints/Sprint_05_Best_Move_Evaluator_Tier2_Think_Longer.md` - ✅ Complete (3 sub-sprints)
+  - `sprints/Sprint_06_Feedback_Explanations_DragDrop_Polish.md` - ✅ Complete
   - `sprints/Sprint_07_Optional_Content_Calibration.md` - 📋 Optional
 
 ## Assumptions baked into this pack

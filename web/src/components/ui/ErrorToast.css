@@ -21,11 +21,11 @@
   display: flex;
   align-items: flex-start;
   gap: 12px;
-  background-color: #2a2a2a;
-  border: 2px solid #E94B3C;
+  background-color: var(--surface);
+  border: 2px solid var(--error);
   border-radius: 8px;
   padding: 16px;
-  box-shadow: 0 4px 16px rgba(233, 75, 60, 0.3);
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3);
   min-width: 320px;
   max-width: 450px;
 }
@@ -45,21 +45,21 @@
 .error-toast-code {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #E94B3C;
+  color: var(--error);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .error-toast-message {
   font-size: 0.9rem;
-  color: #fff;
+  color: var(--text-primary);
   line-height: 1.4;
 }
 
 .error-toast-close {
   background: none;
   border: none;
-  color: #888;
+  color: var(--text-secondary);
   font-size: 1.2rem;
   cursor: pointer;
   padding: 0;
@@ -73,7 +73,7 @@
 }
 
 .error-toast-close:hover {
-  color: #fff;
+  color: var(--text-primary);
 }
 
 @media (max-width: 768px) {
@@ -84,24 +84,5 @@
   
   .error-toast-content {
     min-width: auto;
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  .error-toast-content {
-    background-color: #fff;
-    box-shadow: 0 4px 16px rgba(233, 75, 60, 0.2);
-  }
-  
-  .error-toast-message {
-    color: #333;
-  }
-  
-  .error-toast-close {
-    color: #666;
-  }
-  
-  .error-toast-close:hover {
-    color: #333;
   }
 }

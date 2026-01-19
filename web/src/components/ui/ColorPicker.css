@@ -22,12 +22,13 @@
 }
 
 .color-picker-modal {
-  background-color: #2a2a2a;
+  background-color: var(--surface);
   border-radius: 12px;
   padding: 24px;
   max-width: 400px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   animation: slideUp 0.2s ease;
+  border: 1px solid var(--border);
 }
 
 @keyframes slideUp {
@@ -51,13 +52,13 @@
 .color-picker-header h3 {
   margin: 0;
   font-size: 1.2rem;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .color-picker-close {
   background: none;
   border: none;
-  color: #888;
+  color: var(--text-secondary);
   font-size: 1.5rem;
   cursor: pointer;
   padding: 4px 8px;
@@ -65,7 +66,7 @@
 }
 
 .color-picker-close:hover {
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .color-picker-options {
@@ -106,29 +107,11 @@
 }
 
 .color-option:hover {
-  border-color: #4A90E2;
+  border-color: var(--primary);
   transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .color-option:active {
   transform: scale(0.98);
-}
-
-@media (prefers-color-scheme: light) {
-  .color-picker-modal {
-    background-color: #fff;
-  }
-  
-  .color-picker-header h3 {
-    color: #333;
-  }
-  
-  .color-picker-close {
-    color: #666;
-  }
-  
-  .color-picker-close:hover {
-    color: #333;
-  }
 }

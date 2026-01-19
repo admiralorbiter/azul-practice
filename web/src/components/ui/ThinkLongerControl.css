@@ -3,58 +3,39 @@
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  background: #f5f5f5;
+  background: var(--background);
   border-radius: 6px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
 }
 
 .think-longer-control label {
   font-weight: 600;
   font-size: 14px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .think-longer-control select {
   padding: 8px 12px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border);
   border-radius: 4px;
-  background: white;
+  background: var(--surface);
+  color: var(--text-primary);
   font-size: 14px;
   cursor: pointer;
   transition: border-color 0.2s;
 }
 
 .think-longer-control select:hover:not(:disabled) {
-  border-color: #4A90E2;
+  border-color: var(--primary);
+}
+
+.think-longer-control select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 .think-longer-control select:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  background: #f5f5f5;
-}
-
-@media (prefers-color-scheme: dark) {
-  .think-longer-control {
-    background: #2a2a2a;
-    border-color: #444;
-  }
-  
-  .think-longer-control label {
-    color: #ccc;
-  }
-  
-  .think-longer-control select {
-    background: #1a1a1a;
-    border-color: #555;
-    color: #ccc;
-  }
-  
-  .think-longer-control select:hover:not(:disabled) {
-    border-color: #4A90E2;
-  }
-  
-  .think-longer-control select:disabled {
-    background: #2a2a2a;
-  }
+  background: var(--background);
 }

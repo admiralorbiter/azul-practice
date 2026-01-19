@@ -1,5 +1,7 @@
+import { useState, useEffect } from 'react';
 import { EvaluationResult as EvalResult, Grade } from '../wasm/evaluator';
 import { describeAction } from '../wasm/engine';
+import { BestMoveOverlay } from './ui/BestMoveOverlay';
 import './EvaluationResult.css';
 
 interface EvaluationResultProps {
@@ -8,11 +10,28 @@ interface EvaluationResultProps {
 }
 
 export function EvaluationResult({ result, onNextScenario }: EvaluationResultProps) {
+  const [isRevealing, setIsRevealing] = useState(true);
+  const [showBestMoveOverlay, setShowBestMoveOverlay] = useState(false);
+
+  useEffect(() => {
+    setIsRevealing(true);
+    const timer = setTimeout(() => setIsRevealing(false), 500);
+    return () => clearTimeout(timer);
+  }, [result]);
+
   return (
     <div className="evaluation-result">
+      {/* Best Move Overlay */}
+      {showBestMoveOverlay && (
+        <BestMoveOverlay
+          bestAction={result.best_action}
+          onDismiss={() => setShowBestMoveOverlay(false)}
+        />
+      )}
+      
       {/* Grade Badge */}
       {result.grade && (
-        <div className={`grade-badge grade-${result.grade.toLowerCase()}`}>
+        <div className={`grade-badge grade-${result.grade.toLowerCase()} ${isRevealing ? 'revealing' : ''}`}>
           <div className="grade-label">{result.grade}</div>
           <div className="grade-text">{getGradeText(result.grade)}</div>
         </div>
@@ -62,6 +81,13 @@ export function EvaluationResult({ result, onNextScenario }: EvaluationResultPro
         <div className="best-move-description">
           {describeAction(result.best_action)}
         </div>
+        <button 
+          className="btn-show-best-move"
+          onClick={() => setShowBestMoveOverlay(true)}
+          aria-label="Show best move on board"
+        >
+          Show Best Move
+        </button>
       </div>
       
       {/* Actions */}

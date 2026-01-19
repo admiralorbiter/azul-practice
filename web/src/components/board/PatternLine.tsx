@@ -1,4 +1,4 @@
-import { PatternLine as PatternLineType } from '../../wasm/engine';
+import { PatternLine as PatternLineType, Destination } from '../../wasm/engine';
 import { getTileColor } from '../../styles/colors';
 import './PatternLine.css';
 
@@ -8,9 +8,11 @@ interface PatternLineProps {
   isHighlighted: boolean;
   isDestination: boolean;
   onSelect?: () => void;
+  getDropTargetProps?: (destination: Destination) => any;
+  isDragging?: boolean;
 }
 
-export function PatternLine({ row, patternLine, isHighlighted, isDestination, onSelect }: PatternLineProps) {
+export function PatternLine({ row, patternLine, isHighlighted, isDestination, onSelect, getDropTargetProps, isDragging: _isDragging }: PatternLineProps) {
   const { capacity, color, count_filled } = patternLine;
   const isClickable = isDestination && onSelect;
 
@@ -20,10 +22,19 @@ export function PatternLine({ row, patternLine, isHighlighted, isDestination, on
     }
   };
 
+  const destination: Destination = { PatternLine: row };
+  const dropProps = getDropTargetProps?.(destination) || {};
+  const { className: dropClassName, ...otherDropProps } = dropProps;
+
   return (
     <div
-      className={`pattern-line ${isHighlighted ? 'pattern-line--highlighted' : ''} ${isClickable ? 'pattern-line--clickable' : ''}`}
+      {...otherDropProps}
+      className={`pattern-line ${isHighlighted ? 'pattern-line--highlighted' : ''} ${isClickable ? 'pattern-line--clickable' : ''} ${dropClassName || ''}`}
       onClick={handleClick}
+      role="button"
+      aria-label={`Pattern line ${row + 1}, capacity ${capacity}, currently ${count_filled} of ${capacity} ${color || 'empty'}`}
+      aria-dropeffect={dropClassName?.includes('valid-target') ? 'move' : 'none'}
+      tabIndex={isClickable ? 0 : -1}
     >
       <div className="pattern-line-label">{row + 1}</div>
       <div className="pattern-line-tiles">

@@ -3,14 +3,44 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* BGA-inspired color palette */
+  /* Tile colors */
+  --tile-blue: #1e3a8a;
+  --tile-yellow: #fbbf24;
+  --tile-red: #dc2626;
+  --tile-black: #1f2937;
+  --tile-white: #f9fafb;
+
+  /* UI colors */
+  --primary: #3b82f6;
+  --primary-dark: #1e40af;
+  --surface: #ffffff;
+  --background: #f3f4f6;
+  --border: #d1d5db;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --accent: #8b5cf6;
+
+  /* Feedback colors */
+  --grade-excellent: #10b981;
+  --grade-good: #3b82f6;
+  --grade-okay: #f59e0b;
+  --grade-miss: #ef4444;
+  --error: #dc2626;
+  --success: #059669;
+
+  /* Drag and drop colors */
+  --drag-valid: #4caf50;
+  --drag-invalid: #f44336;
+  --drag-active: #2196f3;
+
+  color: var(--text-primary);
+  background-color: var(--background);
 }
 
 body {
@@ -27,9 +57,33 @@ body {
   text-align: center;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+/* High-contrast focus outline for keyboard navigation */
+*:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Prefers-reduced-motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

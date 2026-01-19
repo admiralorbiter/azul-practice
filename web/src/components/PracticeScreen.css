@@ -17,7 +17,7 @@
 .practice-header h2 {
   margin: 0;
   font-size: 1.8rem;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .practice-controls {
@@ -30,7 +30,8 @@
   display: flex;
   gap: 24px;
   padding: 16px;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: var(--background);
+  border: 1px solid var(--border);
   border-radius: 8px;
   margin-bottom: 24px;
   flex-wrap: wrap;
@@ -44,20 +45,20 @@
 
 .info-label {
   font-size: 0.85rem;
-  color: #888;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
 .info-value {
   font-size: 0.95rem;
-  color: #fff;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
 .practice-empty {
   text-align: center;
   padding: 64px 24px;
-  color: #888;
+  color: var(--text-secondary);
 }
 
 .practice-empty p {
@@ -69,11 +70,11 @@
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #2a2a2a;
-  border: 2px solid #4A90E2;
+  background-color: var(--surface);
+  border: 2px solid var(--primary);
   border-radius: 12px;
   padding: 20px 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
   z-index: 100;
   animation: slideUp 0.3s ease;
 }
@@ -91,12 +92,12 @@
 
 .action-description {
   margin-bottom: 16px;
-  color: #fff;
+  color: var(--text-primary);
   font-size: 1rem;
 }
 
 .action-description strong {
-  color: #4A90E2;
+  color: var(--primary);
 }
 
 .action-buttons {
@@ -110,11 +111,11 @@
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #2a2a2a;
-  border: 2px solid #4CAF50;
+  background-color: var(--surface);
+  border: 2px solid var(--success);
   border-radius: 12px;
   padding: 16px 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
   z-index: 100;
   animation: slideUp 0.3s ease;
   text-align: center;
@@ -122,7 +123,7 @@
 
 .selection-hint p {
   margin: 0 0 12px 0;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 .btn {
@@ -136,27 +137,35 @@
 }
 
 .btn-primary {
-  background-color: #4A90E2;
-  color: #fff;
+  background-color: var(--primary);
+  color: white;
 }
 
 .btn-primary:hover {
-  background-color: #357ABD;
+  background-color: var(--primary-dark);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
 }
 
 .btn-primary:active {
   transform: translateY(0);
 }
 
+.btn-primary:disabled {
+  background-color: var(--border);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 .btn-secondary {
-  background-color: #555;
-  color: #fff;
+  background-color: var(--text-secondary);
+  color: white;
 }
 
 .btn-secondary:hover {
-  background-color: #666;
+  background-color: var(--text-primary);
 }
 
 .btn-small {
@@ -199,30 +208,28 @@
 
 .phase-selector label {
   font-size: 0.9rem;
-  color: #aaa;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
 .phase-select {
   padding: 8px 12px;
-  border: 1px solid #555;
+  border: 1px solid var(--border);
   border-radius: 6px;
-  background-color: #2a2a2a;
-  color: #fff;
+  background-color: var(--surface);
+  color: var(--text-primary);
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .phase-select:hover {
-  border-color: #4A90E2;
-  background-color: #333;
+  border-color: var(--primary);
 }
 
-.phase-select:focus {
-  outline: none;
-  border-color: #4A90E2;
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+.phase-select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 /* Legacy scenarios dropdown */
@@ -233,14 +240,14 @@
 .legacy-scenarios summary {
   cursor: pointer;
   font-size: 0.85rem;
-  color: #888;
+  color: var(--text-secondary);
   padding: 8px 12px;
   user-select: none;
   transition: color 0.2s ease;
 }
 
 .legacy-scenarios summary:hover {
-  color: #aaa;
+  color: var(--text-primary);
 }
 
 .legacy-buttons {
@@ -248,7 +255,7 @@
   gap: 8px;
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px solid #333;
+  border-top: 1px solid var(--border);
 }
 
 /* Evaluation Controls */
@@ -257,11 +264,11 @@
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #2a2a2a;
-  border: 2px solid #4A90E2;
+  background-color: var(--surface);
+  border: 2px solid var(--primary);
   border-radius: 12px;
   padding: 20px 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
   z-index: 100;
   animation: slideUp 0.3s ease;
   display: flex;
@@ -298,53 +305,27 @@
   transform: none;
 }
 
-@media (prefers-color-scheme: light) {
-  .practice-header h2 {
-    color: #333;
-  }
-  
-  .practice-info {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-  
-  .info-value {
-    color: #333;
-  }
-  
-  .action-confirmation,
-  .selection-hint {
-    background-color: #fff;
-  }
-  
-  .action-description {
-    color: #333;
-  }
-  
-  .selection-hint p {
-    color: #333;
-  }
+/* Keyboard shortcut hints */
+.shortcut-hint {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  z-index: 50;
+}
 
-  .phase-selector label {
-    color: #555;
-  }
-
-  .phase-select {
-    background-color: #fff;
-    border-color: #ccc;
-    color: #333;
-  }
-
-  .phase-select:hover {
-    border-color: #4A90E2;
-    background-color: #f5f5f5;
-  }
-
-  .legacy-buttons {
-    border-top-color: #ddd;
-  }
-
-  .evaluation-controls {
-    background-color: #fff;
-    border-color: #4A90E2;
-  }
+.shortcut-hint kbd {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-family: monospace;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 4px;
 }

@@ -1,4 +1,5 @@
-import { PlayerBoard as PlayerBoardType } from '../../wasm/engine';
+import { useState, useEffect } from 'react';
+import { PlayerBoard as PlayerBoardType, Destination } from '../../wasm/engine';
 import { PatternLine } from './PatternLine';
 import { WallGrid } from './WallGrid';
 import { FloorLine } from './FloorLine';
@@ -12,6 +13,8 @@ interface PlayerBoardProps {
   highlightedDestinations?: Set<number>;
   onPatternLineSelect?: (row: number) => void;
   onFloorSelect?: () => void;
+  getDropTargetProps?: (destination: Destination) => any;
+  isDragging?: boolean;
 }
 
 export function PlayerBoard({
@@ -22,14 +25,30 @@ export function PlayerBoard({
   highlightedDestinations,
   onPatternLineSelect,
   onFloorSelect,
+  getDropTargetProps,
+  isDragging,
 }: PlayerBoardProps) {
+  const [prevScore, setPrevScore] = useState(player.score);
+  const [isScoreChanging, setIsScoreChanging] = useState(false);
+
+  useEffect(() => {
+    if (player.score !== prevScore) {
+      setIsScoreChanging(true);
+      const timer = setTimeout(() => {
+        setIsScoreChanging(false);
+        setPrevScore(player.score);
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [player.score, prevScore]);
+
   const isFloorHighlighted = highlightedDestinations?.has(-1) || false;
 
   return (
     <div className={`player-board ${isActive ? 'player-board--active' : ''} ${compact ? 'player-board--compact' : ''}`}>
       <div className="player-board-header">
         <h3>Player {playerIndex}</h3>
-        <div className="player-score">Score: {player.score}</div>
+        <div className={`player-score ${isScoreChanging ? 'changing' : ''}`}>Score: {player.score}</div>
       </div>
 
       <div className="player-board-content">
@@ -45,6 +64,8 @@ export function PlayerBoard({
                 isHighlighted={isHighlighted}
                 isDestination={isHighlighted}
                 onSelect={onPatternLineSelect ? () => onPatternLineSelect(row) : undefined}
+                getDropTargetProps={getDropTargetProps}
+                isDragging={isDragging}
               />
             );
           })}
@@ -61,6 +82,8 @@ export function PlayerBoard({
         isHighlighted={isFloorHighlighted}
         isDestination={isFloorHighlighted}
         onSelect={onFloorSelect}
+        getDropTargetProps={getDropTargetProps}
+        isDragging={isDragging}
       />
     </div>
   );

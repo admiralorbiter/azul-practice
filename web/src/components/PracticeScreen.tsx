@@ -8,6 +8,7 @@ import { DevPanel } from './dev/DevPanel';
 import { EvaluationResult } from './EvaluationResult';
 import { ThinkLongerControl, TimeBudget } from './ui/ThinkLongerControl';
 import { useActionSelection } from '../hooks/useActionSelection';
+import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { createEvaluatorParams, DEFAULT_TIME_BUDGET } from '../config/evaluator-config';
 import { TEST_SCENARIOS } from '../test-scenarios';
 import './PracticeScreen.css';
@@ -34,6 +35,32 @@ export function PracticeScreen() {
     cancelSelection,
     getHighlightedDestinations,
   } = useActionSelection({ gameState, legalActions });
+  
+  // Drag-and-drop hook
+  const handleApplyActionViaDragDrop = (action: DraftAction) => {
+    setUserAction(action);
+    setStateBeforeMove(gameState);
+    
+    const result = applyAction(gameState!, action);
+    if (isError(result)) {
+      setError({ message: result.error.message, code: result.error.code });
+    } else {
+      setGameState(result);
+      cancelSelection();
+      setError(null);
+    }
+  };
+  
+  const handleDragError = (message: string) => {
+    setError({ message, code: 'DRAG_ERROR' });
+  };
+  
+  const dragAndDrop = useDragAndDrop({
+    gameState,
+    legalActions,
+    onApplyAction: handleApplyActionViaDragDrop,
+    onError: handleDragError,
+  });
 
   // Fetch legal actions whenever state changes
   useEffect(() => {
@@ -48,6 +75,42 @@ export function PracticeScreen() {
       }
     }
   }, [gameState]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) {
+        return;
+      }
+
+      switch (e.key) {
+        case 'n':
+        case 'N':
+          if (!e.ctrlKey && !e.metaKey && evaluationResult) {
+            e.preventDefault();
+            handleNextScenario();
+          }
+          break;
+        case 'e':
+        case 'E':
+          if (!e.ctrlKey && !e.metaKey && stateBeforeMove && userAction && !isEvaluating && !evaluationResult) {
+            e.preventDefault();
+            handleEvaluate();
+          }
+          break;
+        case 'Escape':
+          if (selectionState.stage !== 'idle') {
+            e.preventDefault();
+            cancelSelection();
+          }
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [evaluationResult, stateBeforeMove, userAction, isEvaluating, selectionState, cancelSelection]);
 
   const loadScenario = (scenarioKey: keyof typeof TEST_SCENARIOS) => {
     setGameState(TEST_SCENARIOS[scenarioKey]);
@@ -174,6 +237,13 @@ export function PracticeScreen() {
     cancelSelection();
   };
 
+  const handleNextScenario = () => {
+    setEvaluationResult(null);
+    setUserAction(null);
+    setStateBeforeMove(null);
+    handleGenerateScenario();
+  };
+
   const highlightedDestinations = selectionState.stage === 'source-selected' 
     ? getHighlightedDestinations() 
     : undefined;
@@ -264,6 +334,9 @@ export function PracticeScreen() {
             onCenterSelect={handleCenterSelect}
             onPatternLineSelect={handlePatternLineSelect}
             onFloorSelect={handleFloorSelect}
+            getDragSourceProps={dragAndDrop.getDragSourceProps}
+            getDropTargetProps={dragAndDrop.getDropTargetProps}
+            isDragging={dragAndDrop.isDragging}
           />
 
           {selectionState.stage === 'action-ready' && (
@@ -313,12 +386,7 @@ export function PracticeScreen() {
           {evaluationResult && (
             <EvaluationResult 
               result={evaluationResult}
-              onNextScenario={() => {
-                setEvaluationResult(null);
-                setUserAction(null);
-                setStateBeforeMove(null);
-                handleGenerateScenario();
-              }}
+              onNextScenario={handleNextScenario}
             />
           )}
         </>

@@ -1,4 +1,4 @@
-import { GameState, ActionSource } from '../../wasm/engine';
+import { GameState, ActionSource, Destination } from '../../wasm/engine';
 import { Factory } from './Factory';
 import { CenterArea } from './CenterArea';
 import { PlayerBoard } from './PlayerBoard';
@@ -12,6 +12,9 @@ interface GameBoardProps {
   onCenterSelect: () => void;
   onPatternLineSelect: (row: number) => void;
   onFloorSelect: () => void;
+  getDragSourceProps?: (source: ActionSource, color: string, count: number) => any;
+  getDropTargetProps?: (destination: Destination) => any;
+  isDragging?: boolean;
 }
 
 export function GameBoard({
@@ -22,6 +25,9 @@ export function GameBoard({
   onCenterSelect,
   onPatternLineSelect,
   onFloorSelect,
+  getDragSourceProps,
+  getDropTargetProps,
+  isDragging,
 }: GameBoardProps) {
   const activePlayer = gameState.players[gameState.active_player_id];
   const opponentPlayer = gameState.players[1 - gameState.active_player_id];
@@ -49,6 +55,7 @@ export function GameBoard({
               isSelected={isFactorySelected(index)}
               isSelectable={!selectedSource}
               onSelect={onFactorySelect}
+              getDragSourceProps={getDragSourceProps}
             />
           ))}
         </div>
@@ -59,6 +66,7 @@ export function GameBoard({
           isSelected={isCenterSelected()}
           isSelectable={!selectedSource}
           onSelect={onCenterSelect}
+          getDragSourceProps={getDragSourceProps}
         />
       </div>
 
@@ -70,6 +78,8 @@ export function GameBoard({
           highlightedDestinations={highlightedDestinations}
           onPatternLineSelect={onPatternLineSelect}
           onFloorSelect={onFloorSelect}
+          getDropTargetProps={getDropTargetProps}
+          isDragging={isDragging}
         />
 
         <PlayerBoard

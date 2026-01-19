@@ -10,7 +10,7 @@
 
 .floor-line-label {
   font-size: 0.75rem;
-  color: #888;
+  color: var(--text-secondary);
   font-weight: 600;
   min-width: 40px;
 }
@@ -31,12 +31,12 @@
 .floor-slot-content {
   width: 24px;
   height: 24px;
-  border: 2px solid #555;
+  border: 2px solid var(--border);
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(139, 0, 0, 0.1);
+  background-color: rgba(239, 68, 68, 0.05);
 }
 
 .floor-empty {
@@ -68,13 +68,13 @@
 
 .floor-penalty {
   font-size: 0.65rem;
-  color: #E94B3C;
+  color: var(--error);
   font-weight: 600;
 }
 
 .floor-overflow {
   font-size: 0.7rem;
-  color: #888;
+  color: var(--text-secondary);
   margin-left: 8px;
   font-style: italic;
 }
@@ -85,22 +85,45 @@
 
 .floor-line--highlighted {
   background-color: rgba(76, 175, 80, 0.15);
-  outline: 2px solid #4CAF50;
+  outline: 2px solid var(--success);
   outline-offset: 2px;
 }
 
 .floor-line--clickable:hover {
   background-color: rgba(76, 175, 80, 0.25);
-  outline: 3px solid #4CAF50;
+  outline: 3px solid var(--success);
 }
 
-@media (prefers-color-scheme: light) {
-  .floor-slot-content {
-    border-color: #999;
-    background-color: rgba(139, 0, 0, 0.05);
+/* Drag-and-drop styles */
+.floor-line.valid-target {
+  border: 2px solid var(--success) !important;
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+  animation: pulse 1.5s infinite;
+}
+
+.floor-line.hovered {
+  background-color: rgba(16, 185, 129, 0.25) !important;
+  border: 3px solid var(--success) !important;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.4);
+}
+
+.floor-line.animating .floor-tile {
+  animation: tile-placement 200ms ease-out;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  50% { box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
+}
+
+@keyframes tile-placement {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
   }
-  
-  .floor-line--highlighted {
-    background-color: rgba(76, 175, 80, 0.1);
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

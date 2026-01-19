@@ -1,4 +1,4 @@
-import { FloorLine as FloorLineType } from '../../wasm/engine';
+import { FloorLine as FloorLineType, Destination } from '../../wasm/engine';
 import { getTileColor } from '../../styles/colors';
 import './FloorLine.css';
 
@@ -9,9 +9,11 @@ interface FloorLineProps {
   isHighlighted: boolean;
   isDestination: boolean;
   onSelect?: () => void;
+  getDropTargetProps?: (destination: Destination) => any;
+  isDragging?: boolean;
 }
 
-export function FloorLine({ floorLine, isHighlighted, isDestination, onSelect }: FloorLineProps) {
+export function FloorLine({ floorLine, isHighlighted, isDestination, onSelect, getDropTargetProps, isDragging: _isDragging }: FloorLineProps) {
   const { tiles, has_first_player_token } = floorLine;
   const isClickable = isDestination && onSelect;
 
@@ -30,10 +32,21 @@ export function FloorLine({ floorLine, isHighlighted, isDestination, onSelect }:
     displayItems.push({ type: 'tile', color });
   });
 
+  const destination: Destination = 'Floor';
+  const dropProps = getDropTargetProps?.(destination) || {};
+  const { className: dropClassName, ...otherDropProps } = dropProps;
+  
+  const totalPenalty = displayItems.slice(0, 7).reduce((sum, _, i) => sum + FLOOR_PENALTIES[i], 0);
+
   return (
     <div
-      className={`floor-line ${isHighlighted ? 'floor-line--highlighted' : ''} ${isClickable ? 'floor-line--clickable' : ''}`}
+      {...otherDropProps}
+      className={`floor-line ${isHighlighted ? 'floor-line--highlighted' : ''} ${isClickable ? 'floor-line--clickable' : ''} ${dropClassName || ''}`}
       onClick={handleClick}
+      role="button"
+      aria-label={`Floor line, ${tiles.length} tiles, penalty ${totalPenalty} points`}
+      aria-dropeffect={dropClassName?.includes('valid-target') ? 'move' : 'none'}
+      tabIndex={isClickable ? 0 : -1}
     >
       <div className="floor-line-label">Floor</div>
       <div className="floor-line-slots">

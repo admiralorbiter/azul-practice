@@ -1,6 +1,6 @@
 # Sprint Status Tracker
 
-**Last Updated:** January 19, 2026 (Sprint 05 Complete - Best Move Evaluator)
+**Last Updated:** January 19, 2026 (Sprint 06 Complete - Drag/Drop & UI Polish)
 
 ## Overview
 
@@ -203,6 +203,58 @@ This document tracks the completion status of all sprints for the Azul Practice 
 
 ---
 
+### Sprint 06: Drag/Drop & UI Polish
+**Status:** ✅ **COMPLETED**  
+**Completion Date:** January 19, 2026  
+**Documentation:** 
+- [Sprint_06_Feedback_Explanations_DragDrop_Polish.md](sprints/Sprint_06_Feedback_Explanations_DragDrop_Polish.md)
+- [Sprint_06_COMPLETED.md](sprints/Sprint_06_COMPLETED.md) (detailed report)
+
+**Key Deliverables:**
+- **Drag-and-Drop UX:**
+  - Custom React hook (`useDragAndDrop.ts`) with HTML5 Drag API
+  - Ghost tile overlay during drag
+  - Green highlighting on valid drop targets with pulsing animation
+  - Hover state intensification (brighter green)
+  - Invalid drop handling with snap-back animation
+  - Dual interaction modes (drag + click-to-select)
+- **BGA-Inspired UI:**
+  - 40+ CSS variables for consistent color palette
+  - Applied across all 15+ component CSS files
+  - Tile colors, UI colors, feedback colors, drag-and-drop states
+- **Animations (3 Key):**
+  - Tile placement (200ms scale + fade)
+  - Score change (400ms pulse with bounce)
+  - Grade badge reveal (500ms slide-down + scale)
+- **Accessibility:**
+  - ARIA labels on all drag sources and drop targets
+  - Keyboard shortcuts (N, E, Escape)
+  - Focus indicators with high contrast
+  - Screen reader support (`.sr-only` utility)
+  - Prefers-reduced-motion support
+  - WCAG AA compliant
+- **QoL Features:**
+  - `BestMoveOverlay` component with visual highlighting
+  - Keyboard navigation through all interactive elements
+  - Responsive layout improvements
+- **Bug Fixes:**
+  - Fixed prop ordering issue (className overwriting)
+  - Fixed re-render issue with drag state propagation
+
+**Files Created:**
+- `web/src/hooks/useDragAndDrop.ts` (211 lines)
+- `web/src/components/ui/BestMoveOverlay.tsx` + `.css` (180 lines)
+
+**Files Modified:**
+- 20+ component and CSS files (color palette, drag-and-drop, animations)
+- `web/src/index.css` (major update: global palette + accessibility)
+
+**Total Lines Changed:** ~2,500 lines
+
+**Note:** Feedback explanations and grading system were already completed in Sprint 5C. Sprint 6 focused on drag-and-drop UX and UI polish.
+
+---
+
 ## 🚧 In Progress Sprints
 
 *None currently*
@@ -210,19 +262,6 @@ This document tracks the completion status of all sprints for the Azul Practice 
 ---
 
 ## 📋 Planned Sprints
-
----
-
-### Sprint 06: Feedback & Polish
-**Status:** 📋 **PLANNED**  
-**Documentation:** [Sprint_06_Feedback_Explanations_DragDrop_Polish.md](sprints/Sprint_06_Feedback_Explanations_DragDrop_Polish.md)
-
-**Planned Work:**
-- Move feedback and grading
-- Explanation generation
-- Drag-and-drop interaction
-- UI polish and animations
-- Accessibility improvements
 
 ---
 
@@ -241,21 +280,21 @@ This document tracks the completion status of all sprints for the Azul Practice 
 ## Statistics
 
 **Completion Summary:**
-- ✅ Completed: 5 sprints (00, 01, 02, 03, 04, 05)
+- ✅ Completed: 6 sprints (00, 01, 02, 03, 04, 05, 06)
   - Including 4 Sprint 01 sub-sprints (01A, 01B, 01C, 01D)
   - Including 3 Sprint 03 sub-sprints (03A, 03B, 03C)
   - Including 3 Sprint 05 sub-sprints (05A, 05B, 05C)
 - 🚧 In Progress: 0 sprints
-- 📋 Planned: 2 sprints (06, 07)
+- 📋 Planned: 1 sprint (07 - optional)
 
 **Progress:**
-- **62.5%** complete (5 of 8 major sprints)
+- **75%** complete (6 of 8 major sprints)
 - **Core engine:** 100% complete (Sprint 01: 4 sub-sprints)
 - **Basic UI:** 100% complete (Sprint 02)
 - **Game logic:** 100% complete (Sprint 03: 3 sub-sprints)
 - **Scenario generation:** 100% complete (Sprint 04)
-- **AI/Evaluation:** 100% complete (Sprint 05: 3 sub-sprints) ✅
-- **Polish:** 0% (Sprint 06 planned)
+- **AI/Evaluation:** 100% complete (Sprint 05: 3 sub-sprints)
+- **Polish & UX:** 100% complete (Sprint 06) ✅
 
 **Subdivision Approach:**
 - Sprint 1: Subdivided into 4 focused sub-sprints ✅ Completed
@@ -268,17 +307,24 @@ This document tracks the completion status of all sprints for the Azul Practice 
 
 ## Next Steps
 
-**Immediate Priority:** Sprint 06 (Polish & Enhancements) or Sprint 07 (Advanced Features)
+**Immediate Priority:** Sprint 07 (Optional Advanced Features) or User Testing
 
-With the MVP practice loop complete, we can now:
-- **Sprint 06 (Polish):** Drag-and-drop UI, animations, accessibility improvements
-- **Sprint 07 (Advanced):** Multi-player support, advanced policies, performance optimization
-- **OR:** Consider the MVP complete and move to user testing
+With Sprint 06 complete, the MVP is now fully polished and production-ready:
+- ✅ Core engine complete
+- ✅ UI rendering and interactions complete
+- ✅ Game logic complete
+- ✅ Scenario generation complete
+- ✅ AI evaluation complete
+- ✅ Drag-and-drop UX complete
+- ✅ UI polish and accessibility complete
 
-**Dependencies:**
-- Sprint 05 ✅ COMPLETE (move evaluation and feedback operational)
-- Sprint 06 can proceed (polish existing features)
-- Sprint 07 can proceed (advanced enhancements)
+**Options:**
+1. **Sprint 07 (Optional):** Advanced features (3/4-player, enhanced policies, performance optimization)
+2. **User Testing:** Deploy and gather real user feedback
+3. **Content Calibration:** Fine-tune evaluation parameters
+4. **Documentation:** User guide, tutorial, contribution guidelines
+
+**Recommendation:** Consider the MVP complete and move to user testing. Sprint 7 features are nice-to-have but not critical for core value delivery.
 
 ---
 
@@ -389,5 +435,8 @@ npm run dev
 - ✅ Feedback generation (1-3 explanatory bullets) (Sprint 05)
 - ✅ Time budget controls (Fast/Medium/Deep) (Sprint 05)
 - ✅ Complete practice loop (Generate → Play → Evaluate → Feedback) (Sprint 05)
-- ❌ Drag-and-drop (Sprint 06)
-- ❌ UI animations and polish (Sprint 06)
+- ✅ Drag-and-drop with visual feedback (Sprint 06)
+- ✅ UI animations and polish (Sprint 06)
+- ✅ BGA-inspired color palette (Sprint 06)
+- ✅ Accessibility (ARIA, keyboard nav, WCAG AA) (Sprint 06)
+- ✅ Best move overlay visualization (Sprint 06)
