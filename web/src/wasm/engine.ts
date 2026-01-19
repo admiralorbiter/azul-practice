@@ -166,11 +166,11 @@ export function applyAction(
 export function describeAction(action: DraftAction): string {
   const sourceStr = typeof action.source === 'string' 
     ? 'Center' 
-    : `Factory ${action.source.Factory}`;
+    : `Factory ${action.source.Factory + 1}`;  // 1-indexed for display
   
   const destStr = typeof action.destination === 'string'
     ? 'Floor'
-    : `Pattern Line ${action.destination.PatternLine}`;
+    : `Pattern Line ${action.destination.PatternLine + 1}`;  // 1-indexed for display
   
   return `Take ${action.color} from ${sourceStr} to ${destStr}`;
 }

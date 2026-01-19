@@ -1,6 +1,6 @@
 # Sprint Status Tracker
 
-**Last Updated:** January 19, 2026 (Sprint 04 Complete - Deterministic Fix)
+**Last Updated:** January 19, 2026 (Sprint 05 Complete - Best Move Evaluator)
 
 ## Overview
 
@@ -159,6 +159,50 @@ This document tracks the completion status of all sprints for the Azul Practice 
 
 ---
 
+### Sprint 05: Best Move Evaluation
+**Status:** ✅ **COMPLETED**  
+**Completion Date:** January 19, 2026  
+**Documentation:** 
+- [Sprint_05_Best_Move_Evaluator_Tier2_Think_Longer.md](sprints/Sprint_05_Best_Move_Evaluator_Tier2_Think_Longer.md)
+- [Sprint_05_COMPLETED.md](sprints/Sprint_05_COMPLETED.md) (detailed report)
+
+**Sub-Sprints:**
+- ✅ **Sprint 05A:** Rollout Simulation Infrastructure
+- ✅ **Sprint 05B:** Evaluator Core + Action Shortlisting
+- ✅ **Sprint 05C:** Feedback System + UI Integration
+
+**Key Deliverables:**
+- **Rollout Simulation (05A):**
+  - Core rollout engine (`simulate_rollout()`)
+  - Integration with GreedyPolicy and RandomPolicy
+  - Deterministic simulation with seeded RNG
+  - Statistics collection (scores, actions, final state)
+  - 9 comprehensive unit tests
+- **Evaluator Core (05B):**
+  - `evaluate_best_move()` with Monte Carlo sampling
+  - `grade_user_action()` for move comparison
+  - Action shortlisting (heuristic-based)
+  - Time budget support (WASM-safe)
+  - EV calculation and candidate ranking
+  - WASM API exports and TypeScript wrappers
+  - DevPanel integration for testing
+  - 8 unit tests
+- **Feedback & UI (05C):**
+  - Feature tracking (`ActionFeatures` struct)
+  - Feedback generation (1-3 explanatory bullets)
+  - Grading system (EXCELLENT/GOOD/OKAY/MISS)
+  - `ThinkLongerControl` component (time budget selector)
+  - `EvaluationResult` component (results display)
+  - Complete PracticeScreen integration
+  - Critical bug fix (evaluate against pre-move state)
+  - 7 unit tests
+
+**Total Test Suite:** 154 tests passing (150 unit + 4 ignored + 9 integration + 18 doc tests)
+
+**Practice Loop:** Generate → Play → Evaluate → Feedback → Repeat ✅
+
+---
+
 ## 🚧 In Progress Sprints
 
 *None currently*
@@ -166,33 +210,6 @@ This document tracks the completion status of all sprints for the Azul Practice 
 ---
 
 ## 📋 Planned Sprints
-
----
-
-### Sprint 05: Best Move Evaluation
-**Status:** 📋 **PLANNED** (Broken into 3 Sub-Sprints)  
-**Documentation:** [Sprint_05_Best_Move_Evaluator_Tier2_Think_Longer.md](sprints/Sprint_05_Best_Move_Evaluator_Tier2_Think_Longer.md)
-
-**Sub-Sprints:**
-- 📋 **Sprint 05A:** Rollout Simulation Infrastructure
-- 📋 **Sprint 05B:** Evaluator Core + Action Shortlisting
-- 📋 **Sprint 05C:** Feedback System + UI Integration
-
-**Planned Work:**
-- **Rollout Simulation (05A):**
-  - Core rollout engine using Sprint 4 policies
-  - Deterministic simulation to end-of-round
-  - Statistics collection and testing
-- **Evaluator Core (05B):**
-  - Action shortlisting heuristics
-  - Time-budgeted evaluation loop (250/750/1500ms)
-  - EV calculation via Monte Carlo sampling
-  - WASM API exports
-- **Feedback & UI (05C):**
-  - Feature delta tracking (floor, adjacency, completion)
-  - Template-based feedback generation
-  - Grading system (Excellent/Good/Okay/Miss)
-  - Complete evaluation UI with "Think Longer" controls
 
 ---
 
@@ -224,45 +241,44 @@ This document tracks the completion status of all sprints for the Azul Practice 
 ## Statistics
 
 **Completion Summary:**
-- ✅ Completed: 4 sprints (00, 01, 02, 03, 04)
+- ✅ Completed: 5 sprints (00, 01, 02, 03, 04, 05)
   - Including 4 Sprint 01 sub-sprints (01A, 01B, 01C, 01D)
   - Including 3 Sprint 03 sub-sprints (03A, 03B, 03C)
+  - Including 3 Sprint 05 sub-sprints (05A, 05B, 05C)
 - 🚧 In Progress: 0 sprints
-- 📋 Planned: 3 sprints (05, 06, 07)
-  - Sprint 05 broken into 3 sub-sprints (05A, 05B, 05C)
+- 📋 Planned: 2 sprints (06, 07)
 
 **Progress:**
-- **50%** complete (4 of 8 major sprints)
+- **62.5%** complete (5 of 8 major sprints)
 - **Core engine:** 100% complete (Sprint 01: 4 sub-sprints)
 - **Basic UI:** 100% complete (Sprint 02)
 - **Game logic:** 100% complete (Sprint 03: 3 sub-sprints)
 - **Scenario generation:** 100% complete (Sprint 04)
-- **AI/Evaluation:** 0% (Sprint 05 next)
+- **AI/Evaluation:** 100% complete (Sprint 05: 3 sub-sprints) ✅
 - **Polish:** 0% (Sprint 06 planned)
 
 **Subdivision Approach:**
 - Sprint 1: Subdivided into 4 focused sub-sprints ✅ Completed
 - Sprint 3: Subdivided into 3 focused sub-sprints ✅ Completed
 - Sprint 4: Unified sprint (with iterative fixes) ✅ Completed
-- Sprint 5: Subdivided into 3 focused sub-sprints 📋 Planned
+- Sprint 5: Subdivided into 3 focused sub-sprints ✅ Completed
 - This approach enables incremental validation and clearer dependencies
 
 ---
 
 ## Next Steps
 
-**Immediate Priority:** Sprint 05 (Best Move Evaluation)
+**Immediate Priority:** Sprint 06 (Polish & Enhancements) or Sprint 07 (Advanced Features)
 
-With scenarios now generating realistic game states, we can implement move evaluation:
-- Monte Carlo rollout evaluator
-- Multi-ply lookahead
-- Move ranking and quality scoring
-- Foundation for practice feedback (Sprint 06)
+With the MVP practice loop complete, we can now:
+- **Sprint 06 (Polish):** Drag-and-drop UI, animations, accessibility improvements
+- **Sprint 07 (Advanced):** Multi-player support, advanced policies, performance optimization
+- **OR:** Consider the MVP complete and move to user testing
 
 **Dependencies:**
-- Sprint 05 depends on Sprint 03 ✅ (complete - full game simulation available)
-- Sprint 05 depends on Sprint 04 ✅ (complete - policy infrastructure and scenarios available)
-- Sprint 06 depends on Sprint 05 (needs move evaluation for feedback)
+- Sprint 05 ✅ COMPLETE (move evaluation and feedback operational)
+- Sprint 06 can proceed (polish existing features)
+- Sprint 07 can proceed (advanced enhancements)
 
 ---
 
@@ -368,6 +384,10 @@ npm run dev
 - ✅ Multi-round simulation with realistic board progression (Sprint 04)
 - ✅ Seed-based reproducibility (Sprint 04)
 - ✅ Quality filters and robust generation (Sprint 04)
-- ❌ Move evaluation (Sprint 05)
+- ✅ Monte Carlo move evaluation (Sprint 05)
+- ✅ Move grading with EV comparison (Sprint 05)
+- ✅ Feedback generation (1-3 explanatory bullets) (Sprint 05)
+- ✅ Time budget controls (Fast/Medium/Deep) (Sprint 05)
+- ✅ Complete practice loop (Generate → Play → Evaluate → Feedback) (Sprint 05)
 - ❌ Drag-and-drop (Sprint 06)
-- ❌ Move feedback and grading (Sprint 06)
+- ❌ UI animations and polish (Sprint 06)

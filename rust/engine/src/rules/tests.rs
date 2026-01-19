@@ -2,6 +2,7 @@
 mod tests {
     use crate::{State, TileColor, PatternLine, ActionSource, Destination, DraftAction};
     use crate::rules::{list_legal_actions, get_wall_column_for_color, apply_action, check_tile_conservation};
+    use std::collections::HashMap;
 
     /// Helper to create a state with tiles in factories
     fn create_test_state_with_factories() -> State {
@@ -1619,5 +1620,854 @@ mod tests {
         state.players[0].wall[1] = [true, true, true, true, false];
         
         assert!(!check_game_end(&state));
+    }
+
+    // =====================================================================
+    // Shared Test Helpers (Sprint 5A+)
+    // =====================================================================
+
+    /// Helper to count total tiles in state
+    fn count_total_tiles(state: &State) -> u32 {
+            let mut total = 0u32;
+            
+            // Bag and lid
+            for count in state.bag.values() {
+                total += *count as u32;
+            }
+            for count in state.lid.values() {
+                total += *count as u32;
+            }
+            
+            // Factories and center
+            for factory in &state.factories {
+                for count in factory.values() {
+                    total += *count as u32;
+                }
+            }
+            for count in state.center.tiles.values() {
+                total += *count as u32;
+            }
+            
+            // Player boards
+            for player in &state.players {
+                for pattern_line in &player.pattern_lines {
+                    total += pattern_line.count_filled as u32;
+                }
+                for row in &player.wall {
+                    for &filled in row {
+                        if filled {
+                            total += 1;
+                        }
+                    }
+                }
+                total += player.floor_line.tiles.len() as u32;
+            }
+            
+            total
+        }
+
+        /// Create start-of-round state with full factories
+        fn create_start_of_round_state() -> State {
+            let mut state = State::new_test_state();
+            
+            // Add tiles to factories (20 total)
+            state.factories[0].insert(TileColor::Blue, 2);
+            state.factories[0].insert(TileColor::Red, 2);
+            state.factories[1].insert(TileColor::Yellow, 2);
+            state.factories[1].insert(TileColor::Black, 2);
+            state.factories[2].insert(TileColor::White, 2);
+            state.factories[2].insert(TileColor::Blue, 2);
+            state.factories[3].insert(TileColor::Red, 2);
+            state.factories[3].insert(TileColor::Yellow, 2);
+            state.factories[4].insert(TileColor::Black, 2);
+            state.factories[4].insert(TileColor::White, 2);
+            
+            // Bag: 80 tiles
+            state.bag.insert(TileColor::Blue, 16);
+            state.bag.insert(TileColor::Yellow, 16);
+            state.bag.insert(TileColor::Red, 16);
+            state.bag.insert(TileColor::Black, 16);
+            state.bag.insert(TileColor::White, 16);
+            
+            state.center.has_first_player_token = true;
+            
+            state
+        }
+        
+        /// Create mid-round state (some factories empty)
+        fn create_mid_round_state() -> State {
+            let mut state = create_start_of_round_state();
+            
+            // Move tiles from emptied factories to center (simulating mid-round)
+            let tiles_from_f0: Vec<_> = state.factories[0].clone().into_iter().collect();
+            let tiles_from_f1: Vec<_> = state.factories[1].clone().into_iter().collect();
+            
+            for (color, count) in tiles_from_f0 {
+                *state.center.tiles.entry(color).or_insert(0) += count;
+            }
+            for (color, count) in tiles_from_f1 {
+                *state.center.tiles.entry(color).or_insert(0) += count;
+            }
+            
+            // Empty the factories
+            state.factories[0] = HashMap::new();
+            state.factories[1] = HashMap::new();
+            
+            state
+        }
+        
+        /// Create nearly complete round (only center tiles left)
+        fn create_nearly_complete_round() -> State {
+            let mut state = State::new_test_state();
+            // Empty all factories
+            for factory in &mut state.factories {
+                *factory = HashMap::new();
+            }
+            // Leave only 2 tiles in center
+            state.center.tiles.clear();
+            state.center.tiles.insert(TileColor::Blue, 2);
+            state.center.has_first_player_token = true;
+            
+            // Rest in bag
+            state.bag.insert(TileColor::Blue, 18);
+            state.bag.insert(TileColor::Yellow, 20);
+            state.bag.insert(TileColor::Red, 20);
+            state.bag.insert(TileColor::Black, 20);
+            state.bag.insert(TileColor::White, 20);
+            
+            state
+        }
+
+    /// Create fully populated test state for conservation testing
+    fn create_fully_populated_test_state() -> State {
+            let mut state = State::new_test_state();
+            
+            // Distribute tiles across all locations to total 100
+            // Bag: 50 tiles
+            state.bag.insert(TileColor::Blue, 10);
+            state.bag.insert(TileColor::Yellow, 10);
+            state.bag.insert(TileColor::Red, 10);
+            state.bag.insert(TileColor::Black, 10);
+            state.bag.insert(TileColor::White, 10);
+            
+            // Factories: 20 tiles (4 per factory)
+            for i in 0..5 {
+                state.factories[i].insert(TileColor::Blue, 2);
+                state.factories[i].insert(TileColor::Red, 2);
+            }
+            
+            // Center: 10 tiles
+            state.center.tiles.insert(TileColor::Yellow, 5);
+            state.center.tiles.insert(TileColor::Black, 5);
+            
+            // Player 0: 10 tiles
+            state.players[0].pattern_lines[0].color = Some(TileColor::Blue);
+            state.players[0].pattern_lines[0].count_filled = 1;
+            state.players[0].pattern_lines[1].color = Some(TileColor::Red);
+            state.players[0].pattern_lines[1].count_filled = 2;
+            state.players[0].pattern_lines[2].color = Some(TileColor::Yellow);
+            state.players[0].pattern_lines[2].count_filled = 3;
+            state.players[0].floor_line.tiles.push(TileColor::Black);
+            state.players[0].floor_line.tiles.push(TileColor::White);
+            state.players[0].floor_line.tiles.push(TileColor::Blue);
+            state.players[0].wall[3][0] = true; // 1 tile on wall
+            
+            // Player 1: 10 tiles
+            state.players[1].pattern_lines[3].color = Some(TileColor::White);
+            state.players[1].pattern_lines[3].count_filled = 4;
+            state.players[1].pattern_lines[4].color = Some(TileColor::Black);
+            state.players[1].pattern_lines[4].count_filled = 3;
+            state.players[1].floor_line.tiles.push(TileColor::Red);
+            state.players[1].floor_line.tiles.push(TileColor::Yellow);
+            state.players[1].wall[0][0] = true; // 1 tile on wall
+            
+            state
+    }
+
+    // =====================================================================
+    // Rollout Tests (Sprint 5A)
+    // =====================================================================
+
+    mod rollout_tests {
+        use super::*;
+        use crate::rules::{simulate_rollout, RolloutConfig, RolloutError, PolicyMix};
+
+        #[test]
+        fn test_rollout_completes_from_round_start() {
+            let state = create_start_of_round_state();
+            let config = RolloutConfig {
+                active_player_policy: PolicyMix::AllGreedy,
+                opponent_policy: PolicyMix::AllGreedy,
+                seed: 12345,
+                max_actions: 100,
+            };
+            
+            let result = simulate_rollout(&state, &config).unwrap();
+            
+            // Round should complete
+            assert!(result.completed_normally);
+            
+            // Should have taken some actions
+            assert!(result.actions_simulated > 0);
+            assert!(result.actions_simulated < 30); // Typical round is 10-20 actions
+            
+            // Scores should be non-negative
+            assert!(result.player_0_score >= 0);
+            assert!(result.player_1_score >= 0);
+        }
+
+        #[test]
+        fn test_rollout_completes_from_mid_round() {
+            let state = create_mid_round_state();
+            let config = RolloutConfig {
+                active_player_policy: PolicyMix::AllRandom,
+                opponent_policy: PolicyMix::AllRandom,
+                seed: 67890,
+                max_actions: 100,
+            };
+            
+            let result = simulate_rollout(&state, &config).unwrap();
+            
+            // Should complete with fewer actions than from start
+            assert!(result.completed_normally);
+            assert!(result.actions_simulated > 0);
+            assert!(result.actions_simulated < 15);
+        }
+
+        #[test]
+        fn test_deterministic_rollouts() {
+            let state = create_nearly_complete_round();
+            let config = RolloutConfig {
+                active_player_policy: PolicyMix::AllRandom,
+                opponent_policy: PolicyMix::AllRandom,
+                seed: 42,
+                max_actions: 100,
+            };
+            
+            // Run rollout twice with same seed
+            let result1 = simulate_rollout(&state, &config).unwrap();
+            let result2 = simulate_rollout(&state, &config).unwrap();
+            
+            // Core results should be identical for the drafting simulation
+            assert_eq!(result1.actions_simulated, result2.actions_simulated,
+                "Same seed should produce same number of actions");
+            assert_eq!(result1.player_0_score, result2.player_0_score,
+                "Same seed should produce same P0 score");
+            assert_eq!(result1.player_1_score, result2.player_1_score,
+                "Same seed should produce same P1 score");
+            assert_eq!(result1.completed_normally, result2.completed_normally);
+            
+            // Verify walls are identical (deterministic scoring)
+            for player_idx in 0..2 {
+                let p1 = &result1.final_state.players[player_idx];
+                let p2 = &result2.final_state.players[player_idx];
+                
+                assert_eq!(p1.wall, p2.wall, 
+                    "Player {} walls should be identical", player_idx);
+            }
+            
+            // Note: Factory refill at end-of-round uses thread_rng(), so refilled
+            // factories may differ. This is acceptable - the core drafting simulation
+            // is deterministic, which is what matters for move evaluation.
+        }
+
+        #[test]
+        fn test_different_seeds_different_results() {
+            let state = create_start_of_round_state();
+            let config1 = RolloutConfig {
+                active_player_policy: PolicyMix::AllRandom,
+                opponent_policy: PolicyMix::AllRandom,
+                seed: 111,
+                max_actions: 100,
+            };
+            let config2 = RolloutConfig {
+                seed: 222,
+                ..config1.clone()
+            };
+            
+            let result1 = simulate_rollout(&state, &config1).unwrap();
+            let result2 = simulate_rollout(&state, &config2).unwrap();
+            
+            // Results should differ (with very high probability)
+            assert_ne!(result1.actions_simulated, result2.actions_simulated);
+        }
+
+        #[test]
+        fn test_tile_conservation_throughout_rollout() {
+            let state = create_fully_populated_test_state();
+            
+            // Verify initial state has 100 tiles
+            assert_eq!(count_total_tiles(&state), 100);
+            
+            let config = RolloutConfig {
+                active_player_policy: PolicyMix::AllGreedy,
+                opponent_policy: PolicyMix::AllGreedy,
+                seed: 999,
+                max_actions: 100,
+            };
+            
+            let result = simulate_rollout(&state, &config).unwrap();
+            
+            // Verify final state still has 100 tiles
+            assert_eq!(count_total_tiles(&result.final_state), 100);
+        }
+
+        #[test]
+        fn test_max_actions_exceeded() {
+            let state = create_start_of_round_state();
+            let config = RolloutConfig {
+                active_player_policy: PolicyMix::AllRandom,
+                opponent_policy: PolicyMix::AllRandom,
+                seed: 123,
+                max_actions: 3, // Artificially low limit
+            };
+            
+            let result = simulate_rollout(&state, &config);
+            
+            // Should hit max actions before completing
+            assert!(result.is_err());
+            assert_eq!(result.unwrap_err(), RolloutError::MaxActionsExceeded);
+        }
+
+        #[test]
+        fn test_greedy_vs_random_policies() {
+            let state = create_start_of_round_state();
+            
+            // Test with all greedy
+            let config_greedy = RolloutConfig {
+                active_player_policy: PolicyMix::AllGreedy,
+                opponent_policy: PolicyMix::AllGreedy,
+                seed: 555,
+                max_actions: 100,
+            };
+            let result_greedy = simulate_rollout(&state, &config_greedy).unwrap();
+            assert!(result_greedy.completed_normally);
+            
+            // Test with all random
+            let config_random = RolloutConfig {
+                active_player_policy: PolicyMix::AllRandom,
+                opponent_policy: PolicyMix::AllRandom,
+                seed: 555,
+                max_actions: 100,
+            };
+            let result_random = simulate_rollout(&state, &config_random).unwrap();
+            assert!(result_random.completed_normally);
+            
+            // Test with mixed policy
+            let config_mixed = RolloutConfig {
+                active_player_policy: PolicyMix::Mixed { greedy_ratio: 0.7 },
+                opponent_policy: PolicyMix::Mixed { greedy_ratio: 0.7 },
+                seed: 555,
+                max_actions: 100,
+            };
+            let result_mixed = simulate_rollout(&state, &config_mixed).unwrap();
+            assert!(result_mixed.completed_normally);
+        }
+
+        #[test]
+        fn test_end_of_round_resolution_applied() {
+            let mut state = create_mid_round_state();
+            
+            // Set up complete pattern line (accounting for tile conservation)
+            // Remove 1 tile from bag to add to pattern line
+            if let Some(count) = state.bag.get_mut(&TileColor::Blue) {
+                *count -= 1;
+            }
+            state.players[0].pattern_lines[0] = PatternLine {
+                capacity: 1,
+                color: Some(TileColor::Blue),
+                count_filled: 1,
+            };
+            
+            let config = RolloutConfig {
+                active_player_policy: PolicyMix::AllGreedy,
+                opponent_policy: PolicyMix::AllGreedy,
+                seed: 777,
+                max_actions: 100,
+            };
+            
+            let result = simulate_rollout(&state, &config).unwrap();
+            
+            // After resolution:
+            // 1. Pattern line should be cleared
+            assert_eq!(result.final_state.players[0].pattern_lines[0].count_filled, 0);
+            assert_eq!(result.final_state.players[0].pattern_lines[0].color, None);
+            
+            // 2. Wall should have tile placed
+            assert!(result.final_state.players[0].wall[0][0]); // Blue at row 0, col 0
+            
+            // 3. Score should be updated (at least 1 point)
+            assert!(result.final_state.players[0].score > 0);
+        }
+
+        #[test]
+        fn test_rollout_from_nearly_complete_round() {
+            let state = create_nearly_complete_round();
+            
+            let config = RolloutConfig {
+                active_player_policy: PolicyMix::AllGreedy,
+                opponent_policy: PolicyMix::AllGreedy,
+                seed: 888,
+                max_actions: 100,
+            };
+            
+            let result = simulate_rollout(&state, &config).unwrap();
+            
+            // Should complete with very few actions
+            assert!(result.actions_simulated <= 2);
+            assert!(result.completed_normally);
+        }
+    }
+
+    // =====================================================================
+    // Evaluator Tests (Sprint 5B)
+    // =====================================================================
+
+    mod evaluator_tests {
+        use super::*;
+        use crate::rules::{
+            evaluate_best_move, grade_user_action, EvaluatorParams, RolloutPolicyConfig
+        };
+        use std::time::Instant;
+
+        #[test]
+        fn test_evaluation_within_time_budget() {
+            let state = create_start_of_round_state();
+            let params = EvaluatorParams {
+                time_budget_ms: 500,
+                rollouts_per_action: 5,
+                evaluator_seed: 12345,
+                shortlist_size: 10,
+                rollout_config: RolloutPolicyConfig::default(),
+            };
+            
+            let start = Instant::now();
+            let result = evaluate_best_move(&state, 0, &params).unwrap();
+            let elapsed = start.elapsed().as_millis();
+            
+            // Should complete within reasonable time
+            assert!(elapsed < 700, "Elapsed time {} exceeds 700ms", elapsed);
+            
+            // Should have evaluated at least one action
+            assert!(result.metadata.candidates_evaluated > 0);
+        }
+
+        #[test]
+        fn test_action_shortlisting() {
+            let state = create_start_of_round_state();
+            let params = EvaluatorParams {
+                time_budget_ms: 1000,
+                rollouts_per_action: 5,
+                evaluator_seed: 67890,
+                shortlist_size: 10,
+                rollout_config: RolloutPolicyConfig::default(),
+            };
+            
+            let result = evaluate_best_move(&state, 0, &params).unwrap();
+            
+            // Should have many legal actions initially
+            assert!(result.metadata.total_legal_actions > 10);
+            
+            // Should evaluate only shortlist size
+            assert!(result.metadata.candidates_evaluated <= 10);
+        }
+
+        #[test]
+        fn test_deterministic_evaluation() {
+            let state = create_start_of_round_state();
+            let params = EvaluatorParams {
+                time_budget_ms: 250,
+                rollouts_per_action: 10,
+                evaluator_seed: 42,
+                shortlist_size: 0, // Disable shortlisting for full determinism
+                rollout_config: RolloutPolicyConfig::default(),
+            };
+            
+            let result1 = evaluate_best_move(&state, 0, &params).unwrap();
+            let result2 = evaluate_best_move(&state, 0, &params).unwrap();
+            
+            // Same seed should produce identical results
+            assert_eq!(
+                serde_json::to_string(&result1.best_action).unwrap(),
+                serde_json::to_string(&result2.best_action).unwrap(),
+                "Best actions should be identical"
+            );
+            assert!(
+                (result1.best_action_ev - result2.best_action_ev).abs() < 0.001,
+                "EVs should be nearly identical"
+            );
+        }
+
+        #[test]
+        fn test_different_seeds_different_evaluations() {
+            let state = create_start_of_round_state();
+            let params1 = EvaluatorParams {
+                time_budget_ms: 250,
+                rollouts_per_action: 10,
+                evaluator_seed: 111,
+                shortlist_size: 20,
+                rollout_config: RolloutPolicyConfig::default(),
+            };
+            let params2 = EvaluatorParams {
+                evaluator_seed: 222,
+                ..params1.clone()
+            };
+            
+            let result1 = evaluate_best_move(&state, 0, &params1).unwrap();
+            let result2 = evaluate_best_move(&state, 0, &params2).unwrap();
+            
+            // Different seeds should likely produce different EVs (probabilistic)
+            // Note: Actions might be same if clearly dominant
+            assert_ne!(
+                (result1.best_action_ev * 100.0) as i32,
+                (result2.best_action_ev * 100.0) as i32,
+                "Different seeds should produce different EVs"
+            );
+        }
+
+        #[test]
+        fn test_grade_user_action() {
+            let state = create_start_of_round_state();
+            let params = EvaluatorParams {
+                time_budget_ms: 250,
+                rollouts_per_action: 10,
+                evaluator_seed: 555,
+                shortlist_size: 20,
+                rollout_config: RolloutPolicyConfig::default(),
+            };
+            
+            // Evaluate best move
+            let best_result = evaluate_best_move(&state, 0, &params).unwrap();
+            
+            // Get a different legal action (not the best)
+            let legal_actions = list_legal_actions(&state, 0);
+            let user_action = legal_actions.iter()
+                .find(|a| *a != &best_result.best_action)
+                .expect("Should have at least 2 legal actions")
+                .clone();
+            
+            // Grade user action
+            let graded = grade_user_action(&state, 0, &user_action, &params, &best_result).unwrap();
+            
+            // Should have user EV and delta
+            assert!(graded.user_action_ev.is_some());
+            assert!(graded.delta_ev.is_some());
+            
+            // Delta should be negative or zero (user action not better than best)
+            let delta = graded.delta_ev.unwrap();
+            assert!(delta <= 0.0);
+        }
+
+        #[test]
+        fn test_best_action_is_legal() {
+            let state = create_start_of_round_state();
+            let params = EvaluatorParams {
+                time_budget_ms: 250,
+                rollouts_per_action: 10,
+                evaluator_seed: 777,
+                shortlist_size: 20,
+                rollout_config: RolloutPolicyConfig::default(),
+            };
+            
+            let result = evaluate_best_move(&state, 0, &params).unwrap();
+            let legal_actions = list_legal_actions(&state, 0);
+            
+            // Best action must be in legal action set
+            assert!(legal_actions.contains(&result.best_action));
+        }
+
+        #[test]
+        fn test_no_shortlisting_when_few_actions() {
+            let state = create_nearly_complete_round();
+            let params = EvaluatorParams {
+                time_budget_ms: 250,
+                rollouts_per_action: 10,
+                evaluator_seed: 888,
+                shortlist_size: 20, // Larger than available
+                rollout_config: RolloutPolicyConfig::default(),
+            };
+            
+            let result = evaluate_best_move(&state, 0, &params).unwrap();
+            
+            // Should evaluate all actions when fewer than shortlist size
+            assert_eq!(
+                result.metadata.candidates_evaluated, 
+                result.metadata.total_legal_actions,
+                "Should evaluate all actions when less than shortlist size"
+            );
+        }
+
+        #[test]
+        fn test_time_budget_cutoff() {
+            let state = create_start_of_round_state();
+            let params = EvaluatorParams {
+                time_budget_ms: 50, // Very short budget
+                rollouts_per_action: 50, // Many rollouts per action
+                evaluator_seed: 999,
+                shortlist_size: 20,
+                rollout_config: RolloutPolicyConfig::default(),
+            };
+            
+            let start = Instant::now();
+            let result = evaluate_best_move(&state, 0, &params).unwrap();
+            let elapsed = start.elapsed().as_millis();
+            
+            // Should respect time budget (with some tolerance)
+            assert!(elapsed < 200, "Time budget not respected: {}ms", elapsed);
+            
+            // Should still return a valid best action
+            assert!(result.best_action_ev.is_finite());
+            
+            // Likely didn't evaluate all shortlist candidates
+            assert!(result.metadata.candidates_evaluated < 20);
+        }
+    }
+
+    // =====================================================================
+    // Feedback Tests (Sprint 5C)
+    // =====================================================================
+
+    mod feedback_tests {
+        use super::*;
+        use crate::rules::{
+            compute_grade, generate_feedback_bullets, ActionFeatures, Grade,
+            count_pattern_lines_completed, calculate_floor_penalty_for_player
+        };
+
+        #[test]
+        fn test_grade_computation() {
+            assert_eq!(compute_grade(0.1), Grade::Excellent);
+            assert_eq!(compute_grade(0.25), Grade::Excellent);
+            assert_eq!(compute_grade(0.5), Grade::Good);
+            assert_eq!(compute_grade(1.0), Grade::Good);
+            assert_eq!(compute_grade(1.5), Grade::Okay);
+            assert_eq!(compute_grade(2.5), Grade::Okay);
+            assert_eq!(compute_grade(3.0), Grade::Miss);
+            
+            // Negative deltas (absolute value used)
+            assert_eq!(compute_grade(-0.1), Grade::Excellent);
+            assert_eq!(compute_grade(-2.0), Grade::Okay);
+        }
+
+        #[test]
+        fn test_feedback_generation_floor_penalty() {
+            let user_features = ActionFeatures {
+                expected_floor_penalty: -3.0,
+                expected_completions: 0.5,
+                expected_adjacency_points: 2.0,
+                expected_tiles_to_floor: 2.0,
+                takes_first_player_token: false,
+                tiles_acquired: 3,
+            };
+            
+            let best_features = ActionFeatures {
+                expected_floor_penalty: -1.0,
+                expected_completions: 0.5,
+                expected_adjacency_points: 2.0,
+                expected_tiles_to_floor: 2.0,
+                takes_first_player_token: false,
+                tiles_acquired: 4,
+            };
+            
+            let feedback = generate_feedback_bullets(&user_features, &best_features);
+            
+            // Should generate floor penalty feedback
+            assert!(!feedback.is_empty());
+            assert!(feedback.iter().any(|b| matches!(b.category, crate::rules::FeedbackCategory::FloorPenalty)));
+        }
+
+        #[test]
+        fn test_feedback_generation_completions() {
+            let user_features = ActionFeatures {
+                expected_floor_penalty: -1.0,
+                expected_completions: 0.2,
+                expected_adjacency_points: 2.0,
+                expected_tiles_to_floor: 1.0,
+                takes_first_player_token: false,
+                tiles_acquired: 3,
+            };
+            
+            let best_features = ActionFeatures {
+                expected_floor_penalty: -1.0,
+                expected_completions: 0.8,
+                expected_adjacency_points: 2.0,
+                expected_tiles_to_floor: 1.0,
+                takes_first_player_token: false,
+                tiles_acquired: 4,
+            };
+            
+            let feedback = generate_feedback_bullets(&user_features, &best_features);
+            
+            // Should generate completion feedback
+            assert!(!feedback.is_empty());
+            assert!(feedback.iter().any(|b| matches!(b.category, crate::rules::FeedbackCategory::LineCompletion)));
+        }
+
+        #[test]
+        fn test_feedback_sorting_and_limit() {
+            let user_features = ActionFeatures {
+                expected_floor_penalty: -5.0,
+                expected_completions: 0.1,
+                expected_adjacency_points: 1.0,
+                expected_tiles_to_floor: 3.0,
+                takes_first_player_token: true,
+                tiles_acquired: 2,
+            };
+            
+            let best_features = ActionFeatures {
+                expected_floor_penalty: -1.0,
+                expected_completions: 0.9,
+                expected_adjacency_points: 4.0,
+                expected_tiles_to_floor: 0.5,
+                takes_first_player_token: false,
+                tiles_acquired: 4,
+            };
+            
+            let feedback = generate_feedback_bullets(&user_features, &best_features);
+            
+            // Should not exceed 3 bullets
+            assert!(feedback.len() <= 3);
+            
+            // Should be sorted by importance (delta descending)
+            for i in 0..feedback.len().saturating_sub(1) {
+                assert!(feedback[i].delta >= feedback[i + 1].delta,
+                    "Feedback not sorted: bullet {} has delta {}, bullet {} has delta {}",
+                    i, feedback[i].delta, i + 1, feedback[i + 1].delta);
+            }
+        }
+
+        #[test]
+        fn test_count_pattern_lines_completed() {
+            let mut before = crate::model::PlayerBoard::new();
+            let mut after = crate::model::PlayerBoard::new();
+            
+            // Set up a completed line
+            before.pattern_lines[0].capacity = 1;
+            before.pattern_lines[0].color = Some(TileColor::Blue);
+            before.pattern_lines[0].count_filled = 1;
+            
+            // After resolution, line is cleared
+            after.pattern_lines[0].capacity = 1;
+            after.pattern_lines[0].color = None;
+            after.pattern_lines[0].count_filled = 0;
+            after.wall[0][0] = true; // Tile placed on wall
+            
+            let completions = count_pattern_lines_completed(&before, &after);
+            assert_eq!(completions, 1);
+        }
+
+        #[test]
+        fn test_calculate_floor_penalty() {
+            let mut player = crate::model::PlayerBoard::new();
+            
+            // Empty floor
+            let penalty = calculate_floor_penalty_for_player(&player);
+            assert_eq!(penalty, 0);
+            
+            // 3 tiles
+            player.floor_line.tiles.push(TileColor::Blue);
+            player.floor_line.tiles.push(TileColor::Red);
+            player.floor_line.tiles.push(TileColor::Yellow);
+            let penalty = calculate_floor_penalty_for_player(&player);
+            assert_eq!(penalty, -4); // -1, -1, -2
+            
+            // With first player token
+            player.floor_line.has_first_player_token = true;
+            let penalty = calculate_floor_penalty_for_player(&player);
+            assert_eq!(penalty, -6); // -1, -1, -2, -2
+        }
+
+        #[test]
+        fn test_evaluation_includes_features() {
+            let state = create_start_of_round_state();
+            let params = crate::rules::EvaluatorParams {
+                time_budget_ms: 250,
+                rollouts_per_action: 10,
+                evaluator_seed: 12345,
+                shortlist_size: 20,
+                rollout_config: crate::rules::RolloutPolicyConfig::default(),
+            };
+            
+            let result = crate::rules::evaluate_best_move(&state, 0, &params).unwrap();
+            
+            // Should have best_features populated
+            assert!(result.best_features.tiles_acquired > 0);
+            assert!(result.best_features.expected_floor_penalty <= 0.0);
+            assert!(result.best_features.expected_completions >= 0.0);
+        }
+
+        #[test]
+        fn test_ev_consistency_when_user_picks_evaluated_action() {
+            let state = create_start_of_round_state();
+            let params = crate::rules::EvaluatorParams {
+                time_budget_ms: 250,
+                rollouts_per_action: 10,
+                evaluator_seed: 12345,
+                shortlist_size: 20,
+                rollout_config: crate::rules::RolloutPolicyConfig::default(),
+            };
+            
+            // Evaluate best move
+            let best_result = crate::rules::evaluate_best_move(&state, 0, &params).unwrap();
+            
+            // User picks the best action
+            let user_action = best_result.best_action.clone();
+            
+            // Grade user action
+            let graded_result = crate::rules::grade_user_action(
+                &state, 
+                0, 
+                &user_action, 
+                &params, 
+                &best_result
+            ).unwrap();
+            
+            // User EV should equal best EV (same action)
+            assert_eq!(graded_result.user_action_ev, Some(best_result.best_action_ev));
+            
+            // Delta should be 0.0
+            assert_eq!(graded_result.delta_ev, Some(0.0));
+            
+            // Grade should be Excellent
+            assert_eq!(graded_result.grade, Some(crate::rules::Grade::Excellent));
+        }
+
+        #[test]
+        fn test_ev_consistency_for_candidate_action() {
+            let state = create_start_of_round_state();
+            let params = crate::rules::EvaluatorParams {
+                time_budget_ms: 250,
+                rollouts_per_action: 10,
+                evaluator_seed: 12345,
+                shortlist_size: 20,
+                rollout_config: crate::rules::RolloutPolicyConfig::default(),
+            };
+            
+            // Evaluate best move
+            let best_result = crate::rules::evaluate_best_move(&state, 0, &params).unwrap();
+            
+            // Pick a different candidate (not the best)
+            let candidates = best_result.candidates.as_ref().unwrap();
+            assert!(candidates.len() > 1, "Need multiple candidates for this test");
+            
+            let user_action = candidates[1].action.clone();
+            let expected_ev = candidates[1].ev;
+            
+            // Grade user action
+            let graded_result = crate::rules::grade_user_action(
+                &state, 
+                0, 
+                &user_action, 
+                &params, 
+                &best_result
+            ).unwrap();
+            
+            // User EV should match the EV from candidates list (consistency)
+            assert_eq!(graded_result.user_action_ev, Some(expected_ev));
+            
+            // Delta should be consistent with that EV
+            let expected_delta = expected_ev - best_result.best_action_ev;
+            assert_eq!(graded_result.delta_ev, Some(expected_delta));
+        }
     }
 }

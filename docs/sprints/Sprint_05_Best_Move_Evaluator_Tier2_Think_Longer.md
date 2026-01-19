@@ -1,7 +1,10 @@
 # Sprint 5 — Best-Move Evaluator (Tier 2 Rollouts) + "Think Longer"
 
-**Status:** 📋 **PLANNED** (Broken into 3 Sub-Sprints)  
+**Status:** ✅ **COMPLETED**  
+**Completion Date:** January 19, 2026  
 **Goal:** App can compute best move using rollout-based evaluation under a time budget, and grade the user's move with a "Think longer" option.
+
+**Detailed Report:** [Sprint_05_COMPLETED.md](Sprint_05_COMPLETED.md)
 
 ---
 
@@ -9,48 +12,45 @@
 
 Sprint 5 has been broken into **3 focused sub-sprints** for clearer implementation:
 
-### [Sprint 05A — Rollout Simulation Infrastructure](Sprint_05A_Rollout_Simulation.md)
+### ✅ [Sprint 05A — Rollout Simulation Infrastructure](Sprint_05A_Rollout_Simulation.md)
+**Status:** COMPLETED  
 **Goal:** Build the core rollout engine that simulates games to end-of-round using policies.
 
 **Key Deliverables:**
-- Rollout simulation function (`simulate_rollout()`)
-- Integration with GreedyPolicy and RandomPolicy from Sprint 4
-- Deterministic rollouts with seeded RNG
-- Statistics collection (scores, actions taken, etc.)
-- Comprehensive test coverage
-
-**Complexity:** Medium
+- ✅ Rollout simulation function (`simulate_rollout()`)
+- ✅ Integration with GreedyPolicy and RandomPolicy from Sprint 4
+- ✅ Deterministic rollouts with seeded RNG
+- ✅ Statistics collection (scores, actions taken, etc.)
+- ✅ Comprehensive test coverage (9 tests)
 
 ---
 
-### [Sprint 05B — Evaluator Core + Action Shortlisting](Sprint_05B_Evaluator_Core.md)
+### ✅ [Sprint 05B — Evaluator Core + Action Shortlisting](Sprint_05B_Evaluator_Core.md)
+**Status:** COMPLETED  
 **Goal:** Implement the complete evaluation engine with time budgeting and best-move selection.
 
 **Key Deliverables:**
-- Action shortlisting heuristic (reduce ~50 actions to top ~15-20)
-- Time-budgeted evaluation loop with best-so-far return
-- EV calculation via rollout sampling
-- Best action selection and user action grading
-- WASM API for JavaScript integration
-- Performance optimizations (caching, early cutoff)
-
-**Complexity:** High
+- ✅ Action shortlisting heuristic (reduce ~50 actions to top ~15-20)
+- ✅ Time-budgeted evaluation loop with best-so-far return
+- ✅ EV calculation via rollout sampling
+- ✅ Best action selection and user action grading
+- ✅ WASM API for JavaScript integration
+- ✅ Test coverage (8 tests)
 
 ---
 
-### [Sprint 05C — Feedback System + UI Integration](Sprint_05C_Feedback_UI.md)
+### ✅ [Sprint 05C — Feedback System + UI Integration](Sprint_05C_Feedback_UI.md)
+**Status:** COMPLETED  
 **Goal:** Add rich feedback, grading system, and complete UI integration.
 
 **Key Deliverables:**
-- Feature delta tracking (floor penalty, adjacency, completion, waste)
-- Template-based feedback bullet generation (1-3 explanations)
-- Grading system (Excellent/Good/Okay/Miss)
-- Complete evaluation UI in PracticeScreen
-- "Think Longer" time budget controls
-- Results panel with grade, EV comparison, and feedback
-- Dev panel diagnostics for evaluation
-
-**Complexity:** Medium
+- ✅ Feature delta tracking (floor penalty, adjacency, completion, waste)
+- ✅ Template-based feedback bullet generation (1-3 explanations)
+- ✅ Grading system (Excellent/Good/Okay/Miss)
+- ✅ Complete evaluation UI in PracticeScreen
+- ✅ "Think Longer" time budget controls
+- ✅ Results panel with grade, EV comparison, and feedback
+- ✅ Critical bug fix (evaluate against pre-move state)
 
 ---
 

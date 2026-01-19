@@ -7,6 +7,9 @@ use crate::rules::{
     resolve_end_of_round as resolve_end_of_round_internal,
     GeneratorParamsJson,
     generate_scenario_with_filters,
+    evaluate_best_move as evaluate_best_move_internal,
+    grade_user_action as grade_user_action_internal,
+    EvaluatorParams,
 };
 
 /// Helper function to serialize errors consistently
@@ -250,5 +253,127 @@ pub fn generate_scenario(params_json: &str) -> String {
                 Some(json!({"max_attempts": 500, "error": format!("{:?}", e)}))
             )
         }
+    }
+}
+
+/// Evaluate best move using rollout-based Monte Carlo evaluation
+///
+/// # Arguments
+/// * `state_json` - JSON string representing game state
+/// * `player_id` - Player ID (0 or 1)
+/// * `params_json` - JSON string with EvaluatorParams
+///
+/// # Returns
+/// JSON string: either EvaluationResult or error object
+#[wasm_bindgen]
+pub fn evaluate_best_move(
+    state_json: &str,
+    player_id: u8,
+    params_json: &str,
+) -> String {
+    let state: State = match serde_json::from_str(state_json) {
+        Ok(s) => s,
+        Err(e) => return serialize_error(
+            "INVALID_STATE_JSON",
+            &format!("Failed to parse state JSON: {}", e),
+            Some(json!({"parse_error": e.to_string()}))
+        ),
+    };
+    
+    let params: EvaluatorParams = match serde_json::from_str(params_json) {
+        Ok(p) => p,
+        Err(e) => return serialize_error(
+            "INVALID_PARAMS_JSON",
+            &format!("Failed to parse params JSON: {}", e),
+            Some(json!({"parse_error": e.to_string()}))
+        ),
+    };
+    
+    match evaluate_best_move_internal(&state, player_id, &params) {
+        Ok(result) => match serde_json::to_string(&result) {
+            Ok(json) => json,
+            Err(e) => serialize_error(
+                "SERIALIZATION_ERROR",
+                &format!("Failed to serialize result: {}", e),
+                None
+            ),
+        },
+        Err(e) => serialize_error(
+            "EVALUATION_FAILED",
+            &e.to_string(),
+            None
+        ),
+    }
+}
+
+/// Grade user's action compared to best move
+///
+/// # Arguments
+/// * `state_json` - JSON string representing game state
+/// * `player_id` - Player ID (0 or 1)
+/// * `user_action_json` - JSON string with user's DraftAction
+/// * `params_json` - JSON string with EvaluatorParams
+///
+/// # Returns
+/// JSON string: either EvaluationResult with user action grading or error object
+#[wasm_bindgen]
+pub fn grade_user_action(
+    state_json: &str,
+    player_id: u8,
+    user_action_json: &str,
+    params_json: &str,
+) -> String {
+    let state: State = match serde_json::from_str(state_json) {
+        Ok(s) => s,
+        Err(e) => return serialize_error(
+            "INVALID_STATE_JSON",
+            &format!("Failed to parse state JSON: {}", e),
+            Some(json!({"parse_error": e.to_string()}))
+        ),
+    };
+    
+    let user_action: DraftAction = match serde_json::from_str(user_action_json) {
+        Ok(a) => a,
+        Err(e) => return serialize_error(
+            "INVALID_ACTION_JSON",
+            &format!("Failed to parse action JSON: {}", e),
+            Some(json!({"parse_error": e.to_string()}))
+        ),
+    };
+    
+    let params: EvaluatorParams = match serde_json::from_str(params_json) {
+        Ok(p) => p,
+        Err(e) => return serialize_error(
+            "INVALID_PARAMS_JSON",
+            &format!("Failed to parse params JSON: {}", e),
+            Some(json!({"parse_error": e.to_string()}))
+        ),
+    };
+    
+    // First evaluate best move
+    let best_result = match evaluate_best_move_internal(&state, player_id, &params) {
+        Ok(r) => r,
+        Err(e) => return serialize_error(
+            "EVALUATION_FAILED",
+            &e.to_string(),
+            None
+        ),
+    };
+    
+    // Then grade user action
+    match grade_user_action_internal(&state, player_id, &user_action, &params, &best_result) {
+        Ok(result) => match serde_json::to_string(&result) {
+            Ok(json) => json,
+            Err(e) => serialize_error(
+                "SERIALIZATION_ERROR",
+                &format!("Failed to serialize result: {}", e),
+                None
+            ),
+        },
+        Err(e) => serialize_error(
+            "GRADING_FAILED",
+            &e.to_string(),
+            None
+        ),
     }
 }

@@ -251,6 +251,53 @@
   border-top: 1px solid #333;
 }
 
+/* Evaluation Controls */
+.evaluation-controls {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2a2a2a;
+  border: 2px solid #4A90E2;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  animation: slideUp 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.btn-evaluate {
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-evaluate:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
+.btn-evaluate:active {
+  transform: translateY(0);
+}
+
+.btn-evaluate:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 @media (prefers-color-scheme: light) {
   .practice-header h2 {
     color: #333;
@@ -294,5 +341,10 @@
 
   .legacy-buttons {
     border-top-color: #ddd;
+  }
+
+  .evaluation-controls {
+    background-color: #fff;
+    border-color: #4A90E2;
   }
 }

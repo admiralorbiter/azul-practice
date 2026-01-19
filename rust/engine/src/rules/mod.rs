@@ -12,6 +12,9 @@ mod rng;
 mod policy;
 mod generator;
 mod filters;
+mod rollout;
+mod evaluator;
+mod feedback;
 
 #[cfg(test)]
 mod tests;
@@ -30,3 +33,6 @@ pub use rng::*;
 pub use policy::*;
 pub use generator::*;
 pub use filters::*;
+pub use rollout::*;
+pub use evaluator::*;
+pub use feedback::*;

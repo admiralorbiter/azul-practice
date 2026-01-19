@@ -25,7 +25,7 @@ export function Factory({ factoryIndex, tiles, isSelected, isSelectable, onSelec
       className={`factory ${isSelected ? 'factory--selected' : ''} ${isSelectable && !isEmpty ? 'factory--selectable' : ''} ${isEmpty ? 'factory--empty' : ''}`}
       onClick={handleClick}
     >
-      <div className="factory-label">F{factoryIndex}</div>
+      <div className="factory-label">F{factoryIndex + 1}</div>
       <div className="factory-tiles">
         {isEmpty ? (
           <div className="factory-empty-text">Empty</div>

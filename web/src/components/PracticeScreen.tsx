@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { GameState, DraftAction, ActionSource, isError, listLegalActions, applyAction, describeAction, generateScenario } from '../wasm/engine';
+import { gradeUserAction, EvaluationResult as EvalResult } from '../wasm/evaluator';
 import { GameBoard } from './board/GameBoard';
 import { ColorPicker } from './ui/ColorPicker';
 import { ErrorToast } from './ui/ErrorToast';
 import { DevPanel } from './dev/DevPanel';
+import { EvaluationResult } from './EvaluationResult';
+import { ThinkLongerControl, TimeBudget } from './ui/ThinkLongerControl';
 import { useActionSelection } from '../hooks/useActionSelection';
 import { TEST_SCENARIOS } from '../test-scenarios';
 import './PracticeScreen.css';
@@ -15,6 +18,13 @@ export function PracticeScreen() {
   const [colorPickerState, setColorPickerState] = useState<{ source: ActionSource; colors: string[] } | null>(null);
   const [selectedGameStage, setSelectedGameStage] = useState<'ANY' | 'EARLY' | 'MID' | 'LATE'>('ANY');
   const [selectedRoundStage, setSelectedRoundStage] = useState<'ANY' | 'START' | 'MID' | 'END'>('ANY');
+  
+  // Evaluation state
+  const [timeBudget, setTimeBudget] = useState<TimeBudget>(250);
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [evaluationResult, setEvaluationResult] = useState<EvalResult | null>(null);
+  const [userAction, setUserAction] = useState<DraftAction | null>(null);
+  const [stateBeforeMove, setStateBeforeMove] = useState<GameState | null>(null);
 
   const {
     selectionState,
@@ -121,7 +131,11 @@ export function PracticeScreen() {
   const handleApplyAction = () => {
     if (selectionState.stage !== 'action-ready' || !gameState) return;
 
-    const result = applyAction(gameState, selectionState.action);
+    const action = selectionState.action;
+    setUserAction(action); // Store for evaluation
+    setStateBeforeMove(gameState); // Store state BEFORE applying action
+    
+    const result = applyAction(gameState, action);
 
     if (isError(result)) {
       setError({ message: result.error.message, code: result.error.code });
@@ -129,6 +143,39 @@ export function PracticeScreen() {
       setGameState(result);
       cancelSelection();
       setError(null);
+    }
+  };
+
+  const handleEvaluate = () => {
+    if (!stateBeforeMove || !userAction) return;
+    
+    setIsEvaluating(true);
+    
+    try {
+      // Adjust rollouts based on time budget (more time = more rollouts)
+      const rolloutsPerAction = Math.floor(timeBudget / 25);
+      
+      // Evaluate against the state BEFORE the move was applied
+      const result = gradeUserAction(stateBeforeMove, stateBeforeMove.active_player_id, userAction, {
+        evaluator_seed: Date.now(),
+        time_budget_ms: timeBudget,
+        rollouts_per_action: rolloutsPerAction,
+        shortlist_size: 20,
+        rollout_config: {
+          active_player_policy: 'all_greedy',
+          opponent_policy: 'all_greedy'
+        }
+      });
+      
+      setEvaluationResult(result);
+    } catch (error) {
+      console.error('Evaluation failed:', error);
+      setError({ 
+        message: error instanceof Error ? error.message : 'Evaluation failed',
+        code: 'EVALUATION_ERROR'
+      });
+    } finally {
+      setIsEvaluating(false);
     }
   };
 
@@ -251,6 +298,37 @@ export function PracticeScreen() {
                 Cancel Selection
               </button>
             </div>
+          )}
+
+          {/* Evaluation Controls - Show after user makes a move */}
+          {userAction && !evaluationResult && (
+            <div className="evaluation-controls">
+              <ThinkLongerControl 
+                value={timeBudget}
+                onChange={setTimeBudget}
+                disabled={isEvaluating}
+              />
+              <button 
+                className="btn btn-evaluate"
+                onClick={handleEvaluate}
+                disabled={isEvaluating}
+              >
+                {isEvaluating ? 'Evaluating...' : 'Evaluate My Move'}
+              </button>
+            </div>
+          )}
+
+          {/* Evaluation Result - Show after evaluation */}
+          {evaluationResult && (
+            <EvaluationResult 
+              result={evaluationResult}
+              onNextScenario={() => {
+                setEvaluationResult(null);
+                setUserAction(null);
+                setStateBeforeMove(null);
+                handleGenerateScenario();
+              }}
+            />
           )}
         </>
       ) : (

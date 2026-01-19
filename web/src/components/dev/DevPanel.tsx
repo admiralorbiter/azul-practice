@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { GameState, DraftAction, resolveEndOfRound, isError } from '../../wasm/engine';
+import { GameState, DraftAction, resolveEndOfRound, isError, describeAction } from '../../wasm/engine';
 import { getEngineVersion, VersionInfo } from '../../wasm/loader';
+import { evaluateBestMove, EvaluationResult } from '../../wasm/evaluator';
 import './DevPanel.css';
 
 interface DevPanelProps {
@@ -13,6 +14,9 @@ export function DevPanel({ gameState, legalActions, onStateChange }: DevPanelPro
   const [isExpanded, setIsExpanded] = useState(false);
   const [version, setVersion] = useState<VersionInfo | null>(null);
   const [copyMessage, setCopyMessage] = useState<string>('');
+  const [evaluating, setEvaluating] = useState(false);
+  const [evaluationResult, setEvaluationResult] = useState<EvaluationResult | null>(null);
+  const [evalError, setEvalError] = useState<string>('');
 
   useEffect(() => {
     getEngineVersion()
@@ -45,6 +49,34 @@ export function DevPanel({ gameState, legalActions, onStateChange }: DevPanelPro
       alert(`Error resolving round: ${result.error.message}`);
     } else {
       onStateChange(result);
+    }
+  };
+
+  const handleEvaluate = () => {
+    if (!gameState) return;
+    
+    setEvaluating(true);
+    setEvalError('');
+    setEvaluationResult(null);
+    
+    try {
+      const result = evaluateBestMove(gameState, gameState.active_player_id, {
+        evaluator_seed: Date.now(),
+        time_budget_ms: 250,
+        rollouts_per_action: 10,
+        shortlist_size: 20,
+        rollout_config: {
+          active_player_policy: 'all_greedy',
+          opponent_policy: 'all_greedy'
+        }
+      });
+      
+      setEvaluationResult(result);
+    } catch (error) {
+      console.error('Evaluation failed:', error);
+      setEvalError(error instanceof Error ? error.message : 'Unknown error');
+    } finally {
+      setEvaluating(false);
     }
   };
 
@@ -146,6 +178,61 @@ export function DevPanel({ gameState, legalActions, onStateChange }: DevPanelPro
                   </details>
                 </div>
               )}
+
+              <div className="dev-panel-section">
+                <h4>Evaluation (Sprint 5B Test)</h4>
+                <button 
+                  onClick={handleEvaluate}
+                  disabled={evaluating || !legalActions || legalActions.length === 0}
+                  className="dev-btn evaluate-btn"
+                >
+                  {evaluating ? 'Evaluating...' : 'Evaluate Best Move'}
+                </button>
+                {evalError && (
+                  <div className="eval-error">Error: {evalError}</div>
+                )}
+                {evaluationResult && (
+                  <div className="eval-result">
+                    <div className="eval-metrics">
+                      <div><strong>Best EV:</strong> {evaluationResult.best_action_ev?.toFixed(2) || 'N/A'}</div>
+                      <div><strong>Time:</strong> {evaluationResult.metadata?.elapsed_ms || 0}ms</div>
+                      <div><strong>Rollouts:</strong> {evaluationResult.metadata?.rollouts_run || 0}</div>
+                      <div><strong>Candidates:</strong> {evaluationResult.metadata?.candidates_evaluated || 0} / {evaluationResult.metadata?.total_legal_actions || 0}</div>
+                      <div><strong>Completed:</strong> {evaluationResult.metadata?.completed_within_budget ? '✓' : '✗'}</div>
+                    </div>
+                    <details className="dev-details">
+                      <summary>Best Action</summary>
+                      <div className="action-display">
+                        <div className="action-description">
+                          <strong>Move:</strong> {describeAction(evaluationResult.best_action)}
+                        </div>
+                        <details className="action-raw">
+                          <summary>Raw JSON (0-indexed)</summary>
+                          <pre className="dev-json">{JSON.stringify(evaluationResult.best_action, null, 2)}</pre>
+                        </details>
+                      </div>
+                    </details>
+                    {evaluationResult.candidates && (
+                      <details className="dev-details">
+                        <summary>All Candidates ({evaluationResult.candidates.length})</summary>
+                        <div className="candidates-list">
+                          {evaluationResult.candidates
+                            .sort((a, b) => b.ev - a.ev)
+                            .map((c, i) => (
+                              <div key={i} className="candidate-item">
+                                <div className="candidate-rank">#{i + 1}</div>
+                                <div className="candidate-ev">EV: {c.ev.toFixed(2)}</div>
+                                <div className="candidate-action">
+                                  {describeAction(c.action)}
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      </details>
+                    )}
+                  </div>
+                )}
+              </div>
 
               <div className="dev-panel-section">
                 <h4>Round Actions</h4>
