@@ -230,9 +230,9 @@ pub fn generate_scenario(params_json: &str) -> String {
         }
     };
     
-    // Generate with filters and retry logic (max 100 attempts).
-    // Note: generator has fallback so this should not error for filter reasons.
-    match generate_scenario_with_filters(generator_params, filter_config, 100) {
+    // Generate with filters and retry logic (max 500 attempts).
+    // Now strictly enforces stage matching, so may need more attempts to find valid seed.
+    match generate_scenario_with_filters(generator_params, filter_config, 500) {
         Ok(state) => {
             match serde_json::to_string(&state) {
                 Ok(json) => json,
@@ -246,8 +246,8 @@ pub fn generate_scenario(params_json: &str) -> String {
         Err(e) => {
             serialize_error(
                 "GENERATION_FAILED",
-                &format!("Scenario generation failed: {}", e),
-                Some(json!({"max_attempts": 100}))
+                &format!("Scenario generation failed after 500 attempts: {}", e),
+                Some(json!({"max_attempts": 500, "error": format!("{:?}", e)}))
             )
         }
     }

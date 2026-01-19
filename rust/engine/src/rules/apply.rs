@@ -1,5 +1,7 @@
 use crate::{State, DraftAction, ActionSource, Destination};
-use super::{ValidationError, can_place_in_pattern_line, get_wall_column_for_color, check_tile_conservation};
+use super::{ValidationError, can_place_in_pattern_line, get_wall_column_for_color};
+#[cfg(debug_assertions)]
+use super::check_tile_conservation;
 
 /// Apply a draft action to the game state
 ///

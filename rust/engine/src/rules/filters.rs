@@ -4,12 +4,20 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
 /// Error types for quality filtering
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum FilterError {
     /// Scenario has too few legal actions (forced move)
     TooFewActions { actual: usize, minimum: usize },
     /// Scenario has too few unique destination options (degenerate)
     DegenerateOptions { unique_destinations: usize, minimum: usize },
+    /// No non-floor options available
+    NoNonFloorOption,
+    /// Too many floor-only actions
+    TooManyFloorActions { ratio: f32, max_allowed: f32 },
+    /// Value gap too small
+    ValueGapTooSmall { actual: f32, minimum: f32 },
+    /// Value gap too large
+    ValueGapTooLarge { actual: f32, maximum: f32 },
 }
 
 impl std::fmt::Display for FilterError {
@@ -25,6 +33,22 @@ impl std::fmt::Display for FilterError {
                     unique_destinations, minimum
                 )
             }
+            FilterError::NoNonFloorOption => {
+                write!(f, "No non-floor options available")
+            }
+            FilterError::TooManyFloorActions { ratio, max_allowed } => {
+                write!(
+                    f,
+                    "Too many floor actions: {:.1}% (max: {:.1}%)",
+                    ratio * 100.0, max_allowed * 100.0
+                )
+            }
+            FilterError::ValueGapTooSmall { actual, minimum } => {
+                write!(f, "Value gap too small: {:.1} (minimum: {:.1})", actual, minimum)
+            }
+            FilterError::ValueGapTooLarge { actual, maximum } => {
+                write!(f, "Value gap too large: {:.1} (maximum: {:.1})", actual, maximum)
+            }
         }
     }
 }
@@ -35,7 +59,7 @@ impl std::error::Error for FilterError {}
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FilterConfig {
     /// Minimum number of legal actions required
-    /// Default: 3 (avoid forced/nearly-forced moves)
+    /// Default: 6 (raised from 3 for better puzzles)
     #[serde(default = "default_min_legal_actions")]
     pub min_legal_actions: usize,
     
@@ -43,14 +67,44 @@ pub struct FilterConfig {
     /// Default: 2 (avoid scenarios where all actions go to floor)
     #[serde(default = "default_min_unique_destinations")]
     pub min_unique_destinations: usize,
+    
+    /// Require at least one non-floor destination option
+    /// Default: true (avoid pure dump scenarios)
+    #[serde(default = "default_require_non_floor_option")]
+    pub require_non_floor_option: bool,
+    
+    /// Maximum ratio of actions that only go to floor
+    /// Default: 0.5 (at most half can be floor-only)
+    #[serde(default = "default_max_floor_ratio")]
+    pub max_floor_ratio: f32,
+    
+    /// Minimum EV gap between best and 2nd best move (points)
+    /// None means no minimum gap required
+    /// Default: None (balanced mix allows close decisions)
+    #[serde(default)]
+    pub min_value_gap: Option<f32>,
+    
+    /// Maximum EV gap between best and 2nd best move (points)
+    /// None means no maximum gap
+    /// Default: None (balanced mix allows clear best moves)
+    #[serde(default)]
+    pub max_value_gap: Option<f32>,
 }
 
 fn default_min_legal_actions() -> usize {
-    3
+    6  // Raised from 3 for better puzzles
 }
 
 fn default_min_unique_destinations() -> usize {
     2
+}
+
+fn default_require_non_floor_option() -> bool {
+    true
+}
+
+fn default_max_floor_ratio() -> f32 {
+    0.5
 }
 
 impl Default for FilterConfig {
@@ -58,6 +112,10 @@ impl Default for FilterConfig {
         Self {
             min_legal_actions: default_min_legal_actions(),
             min_unique_destinations: default_min_unique_destinations(),
+            require_non_floor_option: default_require_non_floor_option(),
+            max_floor_ratio: default_max_floor_ratio(),
+            min_value_gap: None,
+            max_value_gap: None,
         }
     }
 }
@@ -88,6 +146,11 @@ fn count_unique_destinations(actions: &[DraftAction]) -> usize {
     }
     
     destinations.len()
+}
+
+/// Check if an action goes to floor
+fn is_floor_action(action: &DraftAction) -> bool {
+    matches!(action.destination, Destination::Floor)
 }
 
 /// Apply quality filters to a scenario
@@ -126,6 +189,27 @@ pub fn apply_quality_filters(
         });
     }
     
+    // Filter 3: Require non-floor option
+    if config.require_non_floor_option {
+        let has_non_floor = legal_actions.iter().any(|a| !is_floor_action(a));
+        if !has_non_floor {
+            return Err(FilterError::NoNonFloorOption);
+        }
+    }
+    
+    // Filter 4: Floor action ratio
+    let floor_count = legal_actions.iter().filter(|a| is_floor_action(a)).count();
+    let floor_ratio = floor_count as f32 / legal_actions.len() as f32;
+    if floor_ratio > config.max_floor_ratio {
+        return Err(FilterError::TooManyFloorActions {
+            ratio: floor_ratio,
+            max_allowed: config.max_floor_ratio,
+        });
+    }
+    
+    // Note: EV gap filtering is handled separately in generate_scenario_with_filters
+    // because it requires rollout evaluation which is expensive
+    
     Ok(())
 }
 
@@ -137,8 +221,12 @@ mod tests {
     #[test]
     fn test_default_filter_config() {
         let config = FilterConfig::default();
-        assert_eq!(config.min_legal_actions, 3);
+        assert_eq!(config.min_legal_actions, 6);  // Raised from 3
         assert_eq!(config.min_unique_destinations, 2);
+        assert_eq!(config.require_non_floor_option, true);
+        assert_eq!(config.max_floor_ratio, 0.5);
+        assert_eq!(config.min_value_gap, None);
+        assert_eq!(config.max_value_gap, None);
     }
 
     #[test]
@@ -213,6 +301,10 @@ mod tests {
         let config = FilterConfig {
             min_legal_actions: 100, // Impossible to have 100 legal actions
             min_unique_destinations: 2,
+            require_non_floor_option: true,
+            max_floor_ratio: 0.5,
+            min_value_gap: None,
+            max_value_gap: None,
         };
         
         // Add minimal tiles to create few actions

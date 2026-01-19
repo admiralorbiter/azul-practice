@@ -13,7 +13,8 @@ export function PracticeScreen() {
   const [legalActions, setLegalActions] = useState<DraftAction[] | null>(null);
   const [error, setError] = useState<{ message: string; code?: string } | null>(null);
   const [colorPickerState, setColorPickerState] = useState<{ source: ActionSource; colors: string[] } | null>(null);
-  const [selectedPhase, setSelectedPhase] = useState<'ANY' | 'EARLY' | 'MID' | 'LATE'>('ANY');
+  const [selectedGameStage, setSelectedGameStage] = useState<'ANY' | 'EARLY' | 'MID' | 'LATE'>('ANY');
+  const [selectedRoundStage, setSelectedRoundStage] = useState<'ANY' | 'START' | 'MID' | 'END'>('ANY');
 
   const {
     selectionState,
@@ -45,7 +46,8 @@ export function PracticeScreen() {
 
   const handleGenerateScenario = () => {
     const result = generateScenario({
-      targetPhase: selectedPhase === 'ANY' ? undefined : selectedPhase,
+      targetGameStage: selectedGameStage === 'ANY' ? undefined : selectedGameStage,
+      targetRoundStage: selectedRoundStage === 'ANY' ? undefined : selectedRoundStage,
       policyMix: 'mixed', // Good default: 70% greedy, 30% random
     });
 
@@ -149,17 +151,32 @@ export function PracticeScreen() {
         <h2>Practice Mode</h2>
         <div className="practice-controls">
           <div className="phase-selector">
-            <label htmlFor="phase-select">Phase:</label>
+            <label htmlFor="game-stage-select">Game Stage:</label>
             <select 
-              id="phase-select"
-              value={selectedPhase}
-              onChange={(e) => setSelectedPhase(e.target.value as 'ANY' | 'EARLY' | 'MID' | 'LATE')}
+              id="game-stage-select"
+              value={selectedGameStage}
+              onChange={(e) => setSelectedGameStage(e.target.value as 'ANY' | 'EARLY' | 'MID' | 'LATE')}
               className="phase-select"
             >
-              <option value="ANY">Any Phase</option>
+              <option value="ANY">Any</option>
               <option value="EARLY">Early Game</option>
               <option value="MID">Mid Game</option>
               <option value="LATE">Late Game</option>
+            </select>
+          </div>
+          
+          <div className="phase-selector">
+            <label htmlFor="round-stage-select">Round Stage:</label>
+            <select 
+              id="round-stage-select"
+              value={selectedRoundStage}
+              onChange={(e) => setSelectedRoundStage(e.target.value as 'ANY' | 'START' | 'MID' | 'END')}
+              className="phase-select"
+            >
+              <option value="ANY">Any</option>
+              <option value="START">Start</option>
+              <option value="MID">Mid-Round</option>
+              <option value="END">End</option>
             </select>
           </div>
           

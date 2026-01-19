@@ -30,31 +30,68 @@ mod tests {
     }
 
     #[test]
-    fn test_draft_phase_serialization() {
-        let phase = DraftPhase::Mid;
-        let json = serde_json::to_string(&phase).unwrap();
+    fn test_round_stage_serialization() {
+        let stage = RoundStage::Mid;
+        let json = serde_json::to_string(&stage).unwrap();
         assert_eq!(json, r#""MID""#);
         
-        let restored: DraftPhase = serde_json::from_str(&json).unwrap();
-        assert_eq!(restored, phase);
+        let restored: RoundStage = serde_json::from_str(&json).unwrap();
+        assert_eq!(restored, stage);
     }
 
     #[test]
-    fn test_all_draft_phases_serialize() {
+    fn test_all_round_stages_serialize() {
+        // Test Start
+        let stage = RoundStage::Start;
+        let json = serde_json::to_string(&stage).unwrap();
+        assert_eq!(json, r#""START""#);
+        
+        // Test Mid
+        let stage = RoundStage::Mid;
+        let json = serde_json::to_string(&stage).unwrap();
+        assert_eq!(json, r#""MID""#);
+        
+        // Test End
+        let stage = RoundStage::End;
+        let json = serde_json::to_string(&stage).unwrap();
+        assert_eq!(json, r#""END""#);
+    }
+
+    #[test]
+    fn test_game_stage_serialization() {
+        let stage = GameStage::Mid;
+        let json = serde_json::to_string(&stage).unwrap();
+        assert_eq!(json, r#""MID""#);
+        
+        let restored: GameStage = serde_json::from_str(&json).unwrap();
+        assert_eq!(restored, stage);
+    }
+
+    #[test]
+    fn test_all_game_stages_serialize() {
         // Test Early
-        let phase = DraftPhase::Early;
-        let json = serde_json::to_string(&phase).unwrap();
+        let stage = GameStage::Early;
+        let json = serde_json::to_string(&stage).unwrap();
         assert_eq!(json, r#""EARLY""#);
         
         // Test Mid
-        let phase = DraftPhase::Mid;
-        let json = serde_json::to_string(&phase).unwrap();
+        let stage = GameStage::Mid;
+        let json = serde_json::to_string(&stage).unwrap();
         assert_eq!(json, r#""MID""#);
         
         // Test Late
-        let phase = DraftPhase::Late;
-        let json = serde_json::to_string(&phase).unwrap();
+        let stage = GameStage::Late;
+        let json = serde_json::to_string(&stage).unwrap();
         assert_eq!(json, r#""LATE""#);
+    }
+
+    #[test]
+    fn test_draft_phase_alias_backward_compat() {
+        // DraftPhase is now an alias for RoundStage
+        // Test that it still works for backward compatibility
+        let phase: DraftPhase = RoundStage::Start;
+        let json = serde_json::to_string(&phase).unwrap();
+        assert_eq!(json, r#""START""#);
     }
 
     #[test]
@@ -302,9 +339,10 @@ mod tests {
         assert_eq!(state.state_version, 1);
         assert_eq!(state.ruleset_id, "azul_v1_2p");
         assert_eq!(state.scenario_seed, None);
+        assert_eq!(state.scenario_game_stage, None);
         assert_eq!(state.active_player_id, 0);
         assert_eq!(state.round_number, 1);
-        assert_eq!(state.draft_phase_progress, DraftPhase::Early);
+        assert_eq!(state.draft_phase_progress, RoundStage::Start);
         assert_eq!(state.factories.len(), 5);
         assert!(state.center.has_first_player_token);
         assert_eq!(state.players.len(), 2);

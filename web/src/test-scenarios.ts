@@ -8,6 +8,7 @@ export const MID_GAME_SCENARIO: GameState = {
   active_player_id: 0,
   round_number: 2,
   draft_phase_progress: 'MID',
+  scenario_game_stage: 'MID',
   bag: { Blue: 10, Yellow: 12, Red: 9, Black: 11, White: 13 },
   lid: { Blue: 2, Red: 3 },
   factories: [
@@ -69,7 +70,8 @@ export const EARLY_GAME_SCENARIO: GameState = {
   scenario_seed: 'early_game',
   active_player_id: 0,
   round_number: 1,
-  draft_phase_progress: 'EARLY',
+  draft_phase_progress: 'START',
+  scenario_game_stage: 'EARLY',
   bag: { Blue: 16, Yellow: 16, Red: 16, Black: 16, White: 16 },
   lid: {},
   factories: [
@@ -131,7 +133,8 @@ export const LATE_GAME_SCENARIO: GameState = {
   scenario_seed: 'late_game',
   active_player_id: 1,
   round_number: 5,
-  draft_phase_progress: 'LATE',
+  draft_phase_progress: 'END',
+  scenario_game_stage: 'LATE',
   bag: { Blue: 2, Yellow: 2, Red: 2, Black: 2, White: 2 },
   lid: { Blue: 6, Yellow: 5, Red: 7, Black: 6, White: 10 },
   factories: [

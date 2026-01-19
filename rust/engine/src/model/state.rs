@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use super::{TileColor, DraftPhase, PlayerBoard};
+use super::{TileColor, RoundStage, GameStage, PlayerBoard};
 
 /// Multiset of tiles represented as HashMap
 ///
@@ -57,7 +57,13 @@ pub struct State {
     pub scenario_seed: Option<String>,
     pub active_player_id: u8,
     pub round_number: u8,
-    pub draft_phase_progress: DraftPhase,
+    
+    // Stage tracking (two axes)
+    /// Within-round progress (Start/Mid/End of current round)
+    pub draft_phase_progress: RoundStage,
+    /// Across-game progress (Early/Mid/Late game based on wall development)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub scenario_game_stage: Option<GameStage>,
     
     // Supply
     pub bag: TileMultiset,
@@ -90,7 +96,8 @@ impl State {
             scenario_seed: None,
             active_player_id: 0,
             round_number: 1,
-            draft_phase_progress: DraftPhase::Early,
+            draft_phase_progress: RoundStage::Start,
+            scenario_game_stage: None,
             bag: HashMap::new(),
             lid: HashMap::new(),
             factories: vec![HashMap::new(); 5],

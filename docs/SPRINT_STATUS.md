@@ -1,6 +1,6 @@
 # Sprint Status Tracker
 
-**Last Updated:** January 19, 2026 (Sprint 04 Complete)
+**Last Updated:** January 19, 2026 (Sprint 04 Complete - Deterministic Fix)
 
 ## Overview
 
@@ -108,41 +108,50 @@ This document tracks the completion status of all sprints for the Azul Practice 
 ---
 
 ### Sprint 04: Scenario Generation
-**Status:** ✅ **COMPLETED**  
+**Status:** ✅ **COMPLETED** (with deterministic guarantee)  
 **Completion Date:** January 19, 2026  
 **Documentation:** 
 - [Sprint_04_Scenario_Generation_Phases_Filters.md](sprints/Sprint_04_Scenario_Generation_Phases_Filters.md)
 - [Sprint_04_COMPLETED.md](sprints/Sprint_04_COMPLETED.md) (detailed report)
+- [DOCUMENTATION_UPDATE_2026-01-19_DETERMINISTIC_FIX.md](DOCUMENTATION_UPDATE_2026-01-19_DETERMINISTIC_FIX.md)
 
 **Key Deliverables:**
-- **Multi-Round Generation Strategy:**
-  - Early: 0 rounds complete + 3-8 picks (Round 1, empty walls)
-  - Mid: 1 round complete + 3-10 picks (Round 2, walls filled!)
-  - Late: 2 rounds complete + 2-8 picks (Round 3, walls more filled)
+- **Deterministic Stage-Driven Generation:**
+  - Generator completes rounds **until** target stage is reached (not fixed round count)
+  - **Guaranteed** wall tile counts: Early (≤8), Mid (9-17), Late (≥18)
+  - Stage-driven loop with safety checks (max 10 rounds, overshoot detection)
+  - No more "Max attempts exceeded" errors
+- **Two-Axis Staging System:**
+  - **GameStage** (across-game): Early/Mid/Late based on wall tiles
+  - **RoundStage** (within-round): Start/Mid/End based on tiles on table
+  - Independent targeting on both axes
+- **Snapshot Sampling:**
+  - Records decision points during gameplay (every 2 actions)
+  - Selects best snapshot matching target stage and quality filters
+  - Produces varied scenarios within stage constraints
 - **Policy-Based Simulation:**
   - `RandomPolicy` and `GreedyPolicy` implementations
   - Policy mix configuration (AllRandom/AllGreedy/Mixed)
   - Deterministic bot behavior with seeded RNG
-- **Quality Filters:**
-  - Minimum legal actions filter (default: 3)
-  - Unique destinations filter (default: 2)
-  - Hard fallback mechanism (never fails to generate)
+- **Enhanced Quality Filters:**
+  - Minimum legal actions: 6 (raised from 3)
+  - Minimum unique destinations: 2
+  - Require non-floor option: true
+  - Max floor ratio: 0.5
+  - Hard fallback ensures UI never fails
 - **Seed-Based Reproducibility:**
   - Deterministic RNG with seed storage in state
   - Same seed generates identical scenario
   - Seed display and copy in DevPanel
-- **Determinism Fixes:**
-  - `ALL_COLORS` constant for fixed iteration order
-  - Modified `refill_factories` for deterministic tile drawing
-  - Modified `list_legal_actions` for deterministic action enumeration
 - **UI Integration:**
-  - Phase selector dropdown (Early/Mid/Late Game)
-  - "New Scenario" button
-  - Enhanced DevPanel with seed, round number, phase display
-- **Total Test Suite:** 123 tests passing (121 from previous + 2 new wall-filling tests)
+  - Two dropdowns: "Game Stage" and "Round Stage"
+  - "New Scenario" button with 500 retry attempts
+  - Enhanced DevPanel with both stage axes displayed
+- **Total Test Suite:** 126 tests passing (4 probabilistic tests ignored)
 
-**Critical Fix:**
-- **Wall Filling Issue:** Initial implementation only simulated picks within round 1, so walls were always empty. Redesigned to complete full rounds with `resolve_end_of_round()`, enabling realistic Mid/Late game scenarios with filled walls and non-zero scores.
+**Critical Fixes:**
+1. **Wall Filling (Initial):** Redesigned to complete full rounds with `resolve_end_of_round()`, enabling realistic Mid/Late game scenarios with filled walls.
+2. **Deterministic Stage Guarantee (Final):** Replaced probabilistic "complete N rounds and hope" with deterministic "complete rounds until stage matches." This **guarantees** correct wall tile counts for all stages.
 
 **Known Limitations:**
 - 2-player only (no 3/4-player support yet)

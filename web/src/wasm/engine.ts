@@ -10,7 +10,8 @@ export interface GameState {
   scenario_seed?: string;
   active_player_id: number;
   round_number: number;
-  draft_phase_progress: 'EARLY' | 'MID' | 'LATE';
+  draft_phase_progress: 'START' | 'MID' | 'END';  // Within-round stage
+  scenario_game_stage?: 'EARLY' | 'MID' | 'LATE';  // Across-game stage
   bag: TileMultiset;
   lid: TileMultiset;
   factories: TileMultiset[];
@@ -229,7 +230,11 @@ export function resolveEndOfRound(
 // ============================================================================
 
 export interface GeneratorParams {
-  /** Target phase: "EARLY" | "MID" | "LATE" (default: random) */
+  /** Target game stage (across-game): "EARLY" | "MID" | "LATE" (default: random) */
+  targetGameStage?: 'EARLY' | 'MID' | 'LATE';
+  /** Target round stage (within-round): "START" | "MID" | "END" (default: any) */
+  targetRoundStage?: 'START' | 'MID' | 'END';
+  /** Legacy alias for targetGameStage (backward compatibility) */
   targetPhase?: 'EARLY' | 'MID' | 'LATE';
   /** Seed string for reproducibility (default: random) */
   seed?: string;
@@ -285,7 +290,7 @@ export function generateScenario(
     const result = JSON.parse(resultJson);
     
     if (isError(result)) {
-      console.error('Generator error:', result.error);
+      console.error('Generator error:', JSON.stringify(result.error, null, 2));
     }
     
     return result;

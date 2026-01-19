@@ -91,9 +91,15 @@ export function DevPanel({ gameState, legalActions, onStateChange }: DevPanelPro
                     <span className="dev-value">{legalActions?.length || 0}</span>
                   </div>
                   <div className="dev-info-item">
-                    <span className="dev-label">Draft Phase:</span>
+                    <span className="dev-label">Round Stage:</span>
                     <span className="dev-value">{gameState.draft_phase_progress}</span>
                   </div>
+                  {gameState.scenario_game_stage && (
+                    <div className="dev-info-item">
+                      <span className="dev-label">Game Stage:</span>
+                      <span className="dev-value">{gameState.scenario_game_stage}</span>
+                    </div>
+                  )}
                   <div className="dev-info-item dev-info-item-full">
                     <span className="dev-label">Scenario Seed:</span>
                     <span className="dev-value dev-seed">
