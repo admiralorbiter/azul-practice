@@ -170,15 +170,29 @@ This document tracks the completion status of all sprints for the Azul Practice 
 ---
 
 ### Sprint 05: Best Move Evaluation
-**Status:** 📋 **PLANNED**  
+**Status:** 📋 **PLANNED** (Broken into 3 Sub-Sprints)  
 **Documentation:** [Sprint_05_Best_Move_Evaluator_Tier2_Think_Longer.md](sprints/Sprint_05_Best_Move_Evaluator_Tier2_Think_Longer.md)
 
+**Sub-Sprints:**
+- 📋 **Sprint 05A:** Rollout Simulation Infrastructure
+- 📋 **Sprint 05B:** Evaluator Core + Action Shortlisting
+- 📋 **Sprint 05C:** Feedback System + UI Integration
+
 **Planned Work:**
-- Monte Carlo rollout evaluator
-- Multi-ply lookahead
-- Time budget controls
-- Move ranking
-- Evaluation quality tiers
+- **Rollout Simulation (05A):**
+  - Core rollout engine using Sprint 4 policies
+  - Deterministic simulation to end-of-round
+  - Statistics collection and testing
+- **Evaluator Core (05B):**
+  - Action shortlisting heuristics
+  - Time-budgeted evaluation loop (250/750/1500ms)
+  - EV calculation via Monte Carlo sampling
+  - WASM API exports
+- **Feedback & UI (05C):**
+  - Feature delta tracking (floor, adjacency, completion)
+  - Template-based feedback generation
+  - Grading system (Excellent/Good/Okay/Miss)
+  - Complete evaluation UI with "Think Longer" controls
 
 ---
 
@@ -215,6 +229,7 @@ This document tracks the completion status of all sprints for the Azul Practice 
   - Including 3 Sprint 03 sub-sprints (03A, 03B, 03C)
 - 🚧 In Progress: 0 sprints
 - 📋 Planned: 3 sprints (05, 06, 07)
+  - Sprint 05 broken into 3 sub-sprints (05A, 05B, 05C)
 
 **Progress:**
 - **50%** complete (4 of 8 major sprints)
@@ -229,6 +244,7 @@ This document tracks the completion status of all sprints for the Azul Practice 
 - Sprint 1: Subdivided into 4 focused sub-sprints ✅ Completed
 - Sprint 3: Subdivided into 3 focused sub-sprints ✅ Completed
 - Sprint 4: Unified sprint (with iterative fixes) ✅ Completed
+- Sprint 5: Subdivided into 3 focused sub-sprints 📋 Planned
 - This approach enables incremental validation and clearer dependencies
 
 ---
